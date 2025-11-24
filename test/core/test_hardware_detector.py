@@ -477,8 +477,8 @@ class TestHardwareDetectorMemoryEstimation:
                 param_count = 7_000_000_000
                 estimated = detector.estimate_block_memory(param_count)
 
-                # Expected: 7B * 4 bytes * 3 = 84 GB
-                assert estimated == pytest.approx(84.0, rel=0.01)
+                # Expected: 7B * 4 bytes * 3 / (1024^3) = ~78.23 GiB
+                assert estimated == pytest.approx(78.23, rel=0.01)
 
 
 class TestHardwareDetectorIntegration:

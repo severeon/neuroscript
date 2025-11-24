@@ -282,10 +282,10 @@ version: 1.0.0
 capabilities:
   inputs:
     x:
-      shape: [*, in_features]
+      shape: ["*", in_features]
   outputs:
     y:
-      shape: [*, out_features]
+      shape: ["*", out_features]
   params:
     in_features:
       type: int

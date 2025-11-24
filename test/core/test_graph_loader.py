@@ -30,10 +30,10 @@ version: 1.0.0
 capabilities:
   inputs:
     x:
-      shape: [*, in_features]
+      shape: ["*", in_features]
   outputs:
     y:
-      shape: [*, out_features]
+      shape: ["*", out_features]
   params:
     in_features:
       type: int
@@ -54,10 +54,10 @@ version: 1.0.0
 capabilities:
   inputs:
     x:
-      shape: [*, vocab_size]
+      shape: ["*", vocab_size]
   outputs:
     y:
-      shape: [*, embedding_dim]
+      shape: ["*", embedding_dim]
   params:
     vocab_size:
       type: int
@@ -78,10 +78,10 @@ version: 1.0.0
 capabilities:
   inputs:
     x:
-      shape: [*, hidden_dim]
+      shape: ["*", hidden_dim]
   outputs:
     y:
-      shape: [*, hidden_dim]
+      shape: ["*", hidden_dim]
   params:
     hidden_dim:
       type: int
