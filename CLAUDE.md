@@ -6,49 +6,96 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NeuroScript v2 is a type-safe neural architecture composition system that validates block compatibility through capability-based shape inference before execution. It automatically detects hardware constraints (CUDA/CPU/memory) and executes validated architectures in resource-controlled containers.
 
-**Current State**: Complete architectural specifications ready for implementation. See `specs/` directory for detailed design documents.
+**Core Philosophy**: "Validation is the product. The rest is tooling."
 
-**Legacy**: The v0 parser prototype (`src/tools/parser.py`) transforms Mermaid-based `.mmd` files into IR. This is being superseded by the v2 validation-first approach.
+**Current State**: Phases 1-3 complete (all 10 core components implemented, 278 passing tests). Ready for Phase 4 (example blocks) and Phase 5 (integration testing).
 
-## NeuroScript v2 Architecture (Current Focus)
+## Development Commands
 
-### Quick Reference
+### Testing
 
-**Specifications**: See `specs/README.md` for complete architectural documentation including:
-- `00-research.md` - Evidence-based technology selection
-- `01-blueprint.md` - System architecture with 10 core components
-- `02-requirements.md` - 10 requirements with 50 acceptance criteria
-- `03-design.md` - Detailed component specifications
-- `04-tasks.md` - 21 implementation tasks (179 subtasks)
-- `05-validation.md` - 100% traceability matrix
+```bash
+# Run all tests (278 tests across all components)
+pytest
 
-### Core Components
+# Run with coverage
+pytest --cov=src --cov-report=html
 
-1. **BlockInterface** - Protocol defining block contract
-2. **CapabilityParser** - Parses `block.yaml` capability specifications
-3. **BlockRegistry** - Discovers and loads blocks from filesystem
-4. **GraphLoader** - Loads `architecture.yaml` files
-5. **ShapeValidator** - Validates tensor shape compatibility via unification
-6. **HardwareDetector** - Detects CUDA/CPU/memory capabilities
-7. **ConstraintSolver** - Enumerates valid shape configurations
-8. **GraphValidator** - Orchestrates complete validation with actionable errors
-9. **CompilationEngine** - Generates PyTorch code from validated graphs
-10. **ContainerRuntime** - Executes models in Docker with resource limits
+# Run specific test file
+pytest test/core/test_graph_validator.py
 
-### Development Workflow
+# Run specific test function
+pytest test/core/test_shape_validator.py::test_shape_unification_with_wildcards
+
+# Run with verbose output
+pytest -v
+```
+
+### Installation
+
+```bash
+# Install basic package
+pip install -e .
+
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Install with CUDA support (optional)
+pip install -e ".[cuda]"
+
+# Install with all dependencies
+pip install -e ".[full]"
+```
+
+### CLI Usage
 
 ```bash
 # Validate architecture
-neuroscript validate architecture.yaml --input-shape [32, 128, 512]
+neuroscript validate architecture.yaml --input-shape 32 128 512
 
 # Compile to PyTorch
-neuroscript compile architecture.yaml --input-shape [32, 128, 512] -o model.py
+neuroscript compile architecture.yaml --input-shape 32 128 512 -o model.py
 
 # Execute in container
 neuroscript run model.py --cpu-limit 2.0 --memory-limit 2g
 ```
 
-### Block Structure
+## Architecture Overview
+
+NeuroScript v2 has 10 core components organized into 3 phases:
+
+**Phase 1: Core Infrastructure** (Complete)
+- `BlockInterface` - Protocol defining block contract
+- `CapabilityParser` - Parses `block.yaml` capability specifications
+- `BlockRegistry` - Discovers and loads blocks from filesystem
+- `GraphLoader` - Loads `architecture.yaml` files
+
+**Phase 2: Validation Pipeline** (Complete)
+- `ShapeValidator` - Validates tensor shape compatibility via unification
+- `HardwareDetector` - Detects CUDA/CPU/memory capabilities
+- `ConstraintSolver` - Enumerates valid shape configurations
+- `GraphValidator` - Orchestrates complete validation with actionable errors
+
+**Phase 3: Compilation & Execution** (Complete)
+- `CompilationEngine` - Generates PyTorch code from validated graphs
+- `ContainerRuntime` - Executes models in Docker with resource limits
+
+All components are in `src/core/` with corresponding tests in `test/core/`.
+
+## Specifications Drive Implementation
+
+The `specs/` directory contains complete architectural documentation that drives all implementation:
+
+- `00-research.md` - Technology selection with evidence (PyTorch, Docker, YAML)
+- `01-blueprint.md` - 10-component architecture diagram
+- `02-requirements.md` - 10 requirements × 50 acceptance criteria
+- `03-design.md` - Detailed component specifications with method signatures
+- `04-tasks.md` - 21 tasks, 179 subtasks with traceability to requirements
+- `05-validation.md` - 100% traceability matrix proving all criteria covered
+
+**Key principle**: The specs are NOT aspirational—they're complete architectural blueprints that the implementation strictly follows. Each component has a corresponding spec section.
+
+## Block Structure
 
 Each block lives in `blocks/<name>/`:
 ```
@@ -67,219 +114,159 @@ capabilities:
     x: {shape: ["*", "in_features"], dtype: [float32, float16]}
   outputs:
     y: {shape: ["*", "out_features"], dtype: input.x.dtype}
-  params:
+  parameters:
     in_features: {type: int, range: [1, 100000], required: true}
     out_features: {type: int, range: [1, 100000], required: true}
     bias: {type: bool, default: true}
 ```
 
-### Implementation Status
+## Data Flow
 
-- [x] Research and technology selection
-- [x] Complete architectural specifications (50 requirements, 179 tasks)
-- [ ] Core infrastructure implementation (Phase 1: Tasks 1-4)
-- [ ] Validation pipeline (Phase 2: Tasks 5-8)
-- [ ] Compilation and execution (Phase 3: Tasks 9-10)
-- [ ] Example blocks (Phase 4: Tasks 11-15)
-- [ ] Integration testing (Phase 5: Tasks 16-21)
-
----
-
-## NeuroScript v0 Parser (Legacy Prototype)
-
-## Development Commands
-
-### Running the Parser
-
-Parse a NeuroScript file and output IR to JSON:
-
-```sh
-python src/tools/parser.py src/blocks/apoptotic_model.mmd > build/blocks/apoptotic_model.json
-
-python src/tools/parser.py src/blocks/tiny_recursive_mamba.mmd > build/blocks/tiny_recursive_mamba.json
+```
+User Architecture (architecture.yaml)
+    ↓
+GraphLoader → Parse → ArchitectureGraph
+    ↓
+BlockRegistry → Lookup → BlockCapability
+    ↓
+GraphValidator → Orchestrate → ValidationResult
+    ├→ ShapeValidator → Shape unification
+    ├→ HardwareDetector → Resource compatibility
+    └→ ConstraintSolver → Valid configurations
+    ↓
+CompilationEngine → Generate → PyTorch code
+    ↓
+ContainerRuntime → Execute → Results
 ```
 
-### Testing
+## Key Design Decisions
 
-Run all tests with pytest:
+### 1. Validation vs Execution
+- **Validation** is deterministic, instant—happens before any GPU use
+- **Execution** is optional—users can validate and never compile/run
+- Shape validation catches all errors at compile-time
 
-```sh
-pytest
+### 2. Capability Declaration vs Implementation
+- Blocks declare what they CAN do in `block.yaml` (capability spec)
+- Implementation (PyTorch module) not needed for validation to work
+- Separation enables validation without executing code
+
+### 3. Hardware-Aware Filtering
+- System detects CUDA capability, memory, and CPU cores before validation
+- Blocks requiring CUDA >3.7 are filtered on CPU-only machines
+- Prevents "CUDA not available" errors during execution
+
+### 4. Actionable Error Messages
+Validation failures include:
+- What failed (source/target blocks, expected/actual shapes)
+- Why it failed (constraint violation, type mismatch)
+- How to fix it (add adapter, change config, use different block)
+
+Example:
+```
+Error: Shape mismatch at encoder -> decoder
+  encoder output: [batch, 128, 512]
+  decoder input: [batch, seq, 256] where seq >= 1
+
+Suggested fixes:
+  1. Add adapter: Linear(512 -> 256)
+  2. Change encoder: dim=256
+  3. Change decoder: dim=512
 ```
 
-Run specific test file:
+## Implementation Status
 
-```sh
-pytest test/tools/test_parser.py
-```
+| Phase | Status | Components |
+|-------|--------|------------|
+| Phase 1: Core Infrastructure | ✅ Complete | BlockInterface, CapabilityParser, BlockRegistry, GraphLoader |
+| Phase 2: Validation Pipeline | ✅ Complete | ShapeValidator, HardwareDetector, ConstraintSolver, GraphValidator |
+| Phase 3: Compilation & Execution | ✅ Complete | CompilationEngine, ContainerRuntime |
+| Phase 4: Example Blocks | ⏳ Planned | Linear, Embedding, LayerNorm, Dropout, Sequential |
+| Phase 5: Integration & Testing | ⏳ Planned | End-to-end tests, performance optimization, docs |
 
-Run specific test function:
+**Test Coverage**: 278 passing tests covering all implemented components
 
-```sh
-pytest test/tools/test_parser.py::test_basic
-```
-
-## Architecture
-
-### Core Parser (`src/tools/parser.py`)
-
-The parser is a single-file, regex-based implementation with three main phases:
-
-1. **Frontmatter Parsing** (`parse_frontmatter`)
-   - Extracts YAML frontmatter between `---` delimiters
-   - Looks for `__neuroscript` configuration block containing:
-     - `conf`: list of config file paths
-     - `io`: input/output type/shape definitions
-     - `components`: default component configurations
-
-2. **Node Attribute Parsing** (`parse_node_attrs`, `parse_mermaid_flow`)
-   - Extracts node definitions using `@{...}` syntax
-   - Pattern: `NodeName@{shape: rect, node: TypeName(param=val), label: "..."}`
-   - Normalizes to IR format with fields: `id`, `shape_hint`, `type`, `params`, `label`, `meta`
-   - Handles parameter parsing including:
-     - Key-value pairs: `depth=3`
-     - Boolean flags: `boolTrue` (parsed as `boolTrue=True`)
-     - YAML-safe literals: numbers, strings, booleans
-
-3. **Edge Parsing**
-   - Captures Mermaid edges with optional guards/labels
-   - Pattern: `A -->|$shape fits 64x64x64| B`
-   - Stores: `source`, `target`, `kind` (arrow type), `label`/`guard`
-
-4. **Variable Extraction**
-   - Finds all variable references: `${CONFIG.data.dim_x}` or `$PROJECT_ROOT`
-   - Returns sorted list for config resolution by downstream tools
-   - Parser does NOT evaluate variables—defers to config loader
-
-### IR (Intermediate Representation)
-
-Output structure:
-
-```yaml
-id: string          # file path
-meta:
-  frontmatter: {}   # __neuroscript block
-nodes:
-  - id: string
-    type: string
-    params: {}
-    shape_hint: string
-    label: string
-    meta: {}
-edges:
-  - source: string
-    target: string
-    kind: string
-    label: string
-variables: []       # extracted variable references
-```
-
-### Block Files (`src/blocks/`)
-
-Example NeuroScript files demonstrating the syntax:
-- `apoptotic_model.mmd`: Complex model with subgraphs, guards, and block references
-- `tiny_recursive_mamba.mmd`: Recursive model with cycle guards and entry/exit nodes
-
-### NeuroScript Syntax
-
-Key syntax elements:
-
-**Node attributes:**
-```
-NodeName@{shape: rect, node: TypeName(param=val), label: "Display Name"}
-```
-
-**Edge guards:**
-```
-A -->|$shape fits 64x64x64| B
-A -->|$cycle < 3| B
-```
-
-**Block references:**
-```
-node: BlockReference($PROJECT_ROOT/src/blocks/tiny_recursive_mamba.mmd)
-```
-
-**Frontmatter:**
-```yaml
----
-__neuroscript:
-  conf:
-    - configs/base.yml
-  io:
-    type: Tensor
-    shape: [128, 128]
----
-```
-
-### Guard Expression Semantics
-
-Shape guards (not enforced by parser, documented for type-checker):
-- `fits`: each RHS dimension ≤ corresponding LHS dimension
-- `snug`: same as fits + divisibility constraint
-- `eq`: exact shape match
-
-Cycle guards:
-- `$cycle < 3`: loop iteration count comparison
-- `$loss > $max_loss`: runtime metric comparison
-
-## Key Implementation Details
-
-### Regex Patterns
-
-- `FRONT_RE`: Matches YAML frontmatter block
-- `NODE_ATTR_RE`: Matches node definitions with attributes
-- `EDGE_RE`: Matches Mermaid edges with optional labels
-- `KV_RE`: Parses key-value pairs in node attributes
-- `NODE_TYPE_RE`: Extracts type name and parameters from `TypeName(params)`
-
-### Parameter Parsing
-
-Boolean flags without `=` are parsed as `True`:
-```python
-# Input: params: boolTrue, boolFalse=false
-# Output: {'boolTrue': True, 'boolFalse': False}
-```
-
-All parameter values are parsed via `yaml.safe_load()` for type safety.
-
-### Variable References
-
-Variables are collected but NOT resolved. Pattern: `$\{?([A-Za-z0-9_\.\-/]+)\}?`
-
-Examples:
-- `${CONFIG.data.dim_x}` → `CONFIG.data.dim_x`
-- `$PROJECT_ROOT` → `PROJECT_ROOT`
-
-Resolution happens in downstream tools (NACE/ARIES) via config file loading.
-
-## Project Structure
+## File Structure Highlights
 
 ```
 neuroscript/
+├── specs/              # Complete architectural specifications (ready)
 ├── src/
-│   ├── blocks/          # Example .mmd files
-│   └── tools/
-│       └── parser.py    # Core parser implementation
-├── test/
-│   └── tools/
-│       └── test_parser.py
-├── build/               # Output directory for generated IR JSON files
-├── neuroscript.spec.md  # Language specification
-└── README.md            # Project documentation
+│   ├── core/          # 10 core components (all implemented)
+│   └── cli/           # CLI with validate/compile/run commands
+├── test/              # 278 comprehensive tests
+│   ├── cli/
+│   └── core/
+├── blocks/            # Block implementations (none yet—Phase 4)
+├── pyproject.toml     # Modern Python packaging config
+├── pytest.ini         # Test configuration
+└── README.md          # User-facing documentation
+
 ```
 
-## Ecosystem Context
+## Dependencies
 
-NeuroScript is a foundation for:
-- **NACE**: Live visual/interactive IDE (Rust)
-- **ForkPoint**: Versioned architectural lineage tracker
-- **ARIES**: Automated experiment generation
-- **Construct**: High-level model programming language
+**Core** (required):
+- `pyyaml>=6.0` - YAML parsing
+- `jinja2>=3.0` - Code generation templates
 
-The Python parser is a prototype. Future versions will include:
-- Complete Mermaid grammar support
-- Incremental parsing for NACE
-- Guard expression evaluator
-- Shape/type checker
-- Rust backend integration
+**Optional** (for hardware detection):
+- `torch>=2.0` - CUDA detection, tensor operations
+- `psutil>=5.9` - CPU/memory system queries
+
+**Development**:
+- pytest, black, mypy, ruff
+
+## Code Quality Standards
+
+- **Type hints**: Full type annotations throughout `src/core/`
+- **Error handling**: Specific exception classes per module, no broad catches
+- **Testing**: 278 tests with unit and integration coverage
+- **Documentation**: Docstrings for all public functions and classes
+- **Security**: Restricted eval() environment, input validation
+
+## Working with Specifications
+
+When implementing new features:
+
+1. **Check specs first** → Look in `specs/04-tasks.md` for task definition
+2. **Understand requirements** → Read `specs/02-requirements.md` for acceptance criteria
+3. **Follow the interface** → Reference `specs/03-design.md` for method signatures
+4. **Implement in src/core/** → Create or modify component
+5. **Write tests** → Create/update `test/core/test_*.py`
+6. **Verify traceability** → Check `specs/05-validation.md` for coverage
+
+## Entry Points
+
+**Programmatic**:
+```python
+# Registry discovery
+from core.block_registry import BlockRegistry
+registry = BlockRegistry()
+
+# Graph loading and validation
+from core.graph_loader import GraphLoader
+from core.graph_validator import GraphValidator
+from core.hardware_detector import HardwareDetector
+
+loader = GraphLoader(registry)
+graph = loader.load('architecture.yaml')
+hardware = HardwareDetector()
+validator = GraphValidator(graph, registry, hardware)
+result = validator.validate()
+```
+
+**CLI**:
+```python
+# Entry point defined in pyproject.toml
+# [project.scripts]
+# neuroscript = "src.cli.main:main"
+```
+
+## Important Notes
+
+- Modules in `src/core/` are loosely coupled via dataclass interfaces
+- Each module has corresponding test file with 20-40 tests
+- Shape patterns support wildcards (`*`) and named dimensions
+- Container runtime requires Docker installation
+- All tests pass on Python 3.8+
