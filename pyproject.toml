@@ -51,8 +51,11 @@ Documentation = "https://github.com/anthropics/neuroscript/blob/main/README.md"
 Repository = "https://github.com/anthropics/neuroscript.git"
 "Issue Tracker" = "https://github.com/anthropics/neuroscript/issues"
 
+[project.scripts]
+neuroscript = "src.cli.main:main"
+
 [tool.setuptools]
-packages = ["core"]
+packages = ["core", "cli"]
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]

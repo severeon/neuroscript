@@ -113,7 +113,7 @@ class HardwareDetector:
         Returns:
             bool: True if CUDA is available, False otherwise
         """
-        if not TORCH_AVAILABLE:
+        if not TORCH_AVAILABLE or torch is None:
             logger.warning("PyTorch not available, CUDA detection disabled")
             return False
 
@@ -131,7 +131,7 @@ class HardwareDetector:
         Returns:
             Optional[Tuple[int, int]]: (major, minor) compute capability or None if no CUDA
         """
-        if not self.check_cuda_available():
+        if not self.check_cuda_available() or torch is None:
             return None
 
         try:
@@ -149,7 +149,7 @@ class HardwareDetector:
         Returns:
             Optional[float]: GPU memory in GB or None if unavailable
         """
-        if not TORCH_AVAILABLE or not torch.cuda.is_available():
+        if not TORCH_AVAILABLE or torch is None or not torch.cuda.is_available():
             return None
 
         try:
@@ -168,7 +168,7 @@ class HardwareDetector:
         Returns:
             int: Number of CPU cores (defaults to 1 if detection fails)
         """
-        if not PSUTIL_AVAILABLE:
+        if not PSUTIL_AVAILABLE or psutil is None:
             logger.warning("psutil not available, defaulting to 1 CPU core")
             return 1
 
@@ -188,7 +188,7 @@ class HardwareDetector:
         Returns:
             float: System memory in GB (defaults to 1.0 if detection fails)
         """
-        if not PSUTIL_AVAILABLE:
+        if not PSUTIL_AVAILABLE or psutil is None:
             logger.warning("psutil not available, defaulting to 1GB system memory")
             return 1.0
 

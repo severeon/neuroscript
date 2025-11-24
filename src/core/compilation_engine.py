@@ -391,7 +391,7 @@ class CompilationEngine:
         if self._is_sequential():
             return {
                 'type': 'sequential',
-                'nodes': [self._node_map[nid] for nid in self._execution_order]
+                'nodes': [self._node_map[nid] for nid in self._execution_order] if self._execution_order is not None else list()
             }
 
         # Check if graph has parallel branches
@@ -537,29 +537,30 @@ class CompilationEngine:
             computed.add("x")
 
         # Execute nodes in topological order
-        for node_id in self._execution_order:
-            node = self._node_map[node_id]
+        if (self._execution_order is not None):
+            for node_id in self._execution_order:
+                node = self._node_map[node_id]
 
-            # Find inputs for this node
-            incoming_edges = [e for e in self.graph.edges if e.target == node_id]
+                # Find inputs for this node
+                incoming_edges = [e for e in self.graph.edges if e.target == node_id]
 
-            if not incoming_edges:
-                # Node has no incoming edges
-                if node_id in self.graph.inputs:
-                    # This node is marked as an input, use it as input variable
-                    input_var = node_id
+                if not incoming_edges:
+                    # Node has no incoming edges
+                    if node_id in self.graph.inputs:
+                        # This node is marked as an input, use it as input variable
+                        input_var = node_id
+                    else:
+                        # Use default input
+                        input_var = "x" if "x" in computed else list(computed)[0] if computed else "x"
                 else:
-                    # Use default input
-                    input_var = "x" if "x" in computed else list(computed)[0] if computed else "x"
-            else:
-                # Use output from source node
-                edge = incoming_edges[0]
-                input_var = f"{edge.source}_out" if f"{edge.source}_out" in computed or edge.source not in computed else edge.source
+                    # Use output from source node
+                    edge = incoming_edges[0]
+                    input_var = f"{edge.source}_out" if f"{edge.source}_out" in computed or edge.source not in computed else edge.source
 
-            # Execute block
-            output_var = f"{node_id}_out"
-            lines.append(f"        {output_var} = self.{node_id}({input_var})")
-            computed.add(output_var)
+                # Execute block
+                output_var = f"{node_id}_out"
+                lines.append(f"        {output_var} = self.{node_id}({input_var})")
+                computed.add(output_var)
 
         return "\n".join(lines)
 
