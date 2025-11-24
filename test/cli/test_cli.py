@@ -73,7 +73,7 @@ def test_run_success(mock_runtime, capsys):
         assert exc_info.value.code == 0
 
     captured = capsys.readouterr()
-    assert 'Success output' in captured.out
+    assert 'Execution Summary' in captured.out
 
 
 def test_help(capsys):

@@ -8,14 +8,14 @@ NeuroScript v2 is a type-safe neural architecture composition system that valida
 
 **Core Philosophy**: "Validation is the product. The rest is tooling."
 
-**Current State**: Phases 1-3 complete (all 10 core components implemented, 278 passing tests). Ready for Phase 4 (example blocks) and Phase 5 (integration testing).
+**Current State**: Phases 1-3 complete (all 10 core components implemented, 298 passing tests including monitoring). Ready for Phase 4 (example blocks) and Phase 5 (integration testing).
 
 ## Development Commands
 
 ### Testing
 
 ```bash
-# Run all tests (278 tests across all components)
+# Run all tests (298 tests across all components)
 pytest
 
 # Run with coverage
@@ -56,8 +56,17 @@ neuroscript validate architecture.yaml --input-shape 32 128 512
 # Compile to PyTorch
 neuroscript compile architecture.yaml --input-shape 32 128 512 -o model.py
 
-# Execute in container
+# Run inference with monitoring (default)
 neuroscript run model.py --cpu-limit 2.0 --memory-limit 2g
+
+# Run training mode with monitoring
+neuroscript run model.py --mode training --epochs 10 --batch-size 32
+
+# Run with log saving
+neuroscript run model.py --enable-save-logs
+
+# Run quietly (minimal output)
+neuroscript run model.py --quiet
 ```
 
 ## Architecture Overview
@@ -79,8 +88,90 @@ NeuroScript v2 has 10 core components organized into 3 phases:
 **Phase 3: Compilation & Execution** (Complete)
 - `CompilationEngine` - Generates PyTorch code from validated graphs
 - `ContainerRuntime` - Executes models in Docker with resource limits
+- `Monitoring` - Real-time execution tracking with resource monitoring
 
 All components are in `src/core/` with corresponding tests in `test/core/`.
+
+## Execution Monitoring System
+
+NeuroScript includes comprehensive execution monitoring for both inference and training:
+
+**Real-time Metrics**:
+- CPU usage (% per core)
+- Memory usage (MB and % of limit)
+- GPU utilization and memory (if available)
+- Per-layer/block timing (milliseconds)
+- Training progress (epochs, batches, loss, accuracy)
+
+**Monitoring Output**:
+```
+[12:34:56] Starting inference | Input shape: (1, 512)
+[12:34:56] Block 'encoder': (1, 512) → (1, 256) [15.3ms]
+[12:34:57] Block 'decoder': (1, 256) → (1, 128) [12.8ms]
+
+Execution Summary:
+─────────────────
+Total Time: 2.1s
+Peak Memory: 245.3 MB
+Peak CPU: 67.8%
+
+Layer Timings (avg):
+  encoder: 15.3ms
+  decoder: 12.8ms
+```
+
+**Training Mode Output**:
+```
+[12:34:56] Starting training | Input shape: (32, 512)
+[12:34:57] Epoch 1/5 started
+[12:35:02] Epoch 1 | Batch 10/31 | Loss: 0.4523
+[12:35:10] Epoch 1/5 complete | Train Loss: 0.3241 | Accuracy: 0.887
+[12:35:15] Epoch 2/5 started
+...
+
+Execution Summary:
+─────────────────
+Total Time: 45.3s
+Peak Memory: 1024.5 MB
+Peak CPU: 87.3%
+
+Final Metrics:
+  Train Loss: 0.1234
+  Train Accuracy: 0.9456
+```
+
+**Log Files**:
+Monitoring data can be saved to JSON files for later analysis:
+```bash
+neuroscript run model.py --enable-save-logs
+# Creates: neuroscript_run_20250124_123456.log
+```
+
+Log file structure:
+```json
+{
+  "command": {"model": "model.py", "mode": "training", ...},
+  "start_time": "2025-01-24T12:34:56",
+  "end_time": "2025-01-24T12:35:41",
+  "execution_time_seconds": 45.3,
+  "monitoring_events": [...],
+  "resource_samples": [...],
+  "metrics": {
+    "peak_memory_mb": 1024.5,
+    "peak_cpu_percent": 87.3,
+    "final_train_loss": 0.1234,
+    "layer_timings": {"encoder": 15.3, "decoder": 12.8}
+  }
+}
+```
+
+**Generated Model Features**:
+All compiled models include:
+- Built-in monitoring instrumentation
+- Command-line arguments for mode selection (`--mode inference|training`)
+- Training loop with synthetic data for testing
+- Per-block timing with automatic event emission
+- Structured JSON event protocol for tooling integration
 
 ## Specifications Drive Implementation
 
@@ -180,11 +271,11 @@ Suggested fixes:
 |-------|--------|------------|
 | Phase 1: Core Infrastructure | ✅ Complete | BlockInterface, CapabilityParser, BlockRegistry, GraphLoader |
 | Phase 2: Validation Pipeline | ✅ Complete | ShapeValidator, HardwareDetector, ConstraintSolver, GraphValidator |
-| Phase 3: Compilation & Execution | ✅ Complete | CompilationEngine, ContainerRuntime |
+| Phase 3: Compilation & Execution | ✅ Complete | CompilationEngine, ContainerRuntime, Monitoring |
 | Phase 4: Example Blocks | ⏳ Planned | Linear, Embedding, LayerNorm, Dropout, Sequential |
 | Phase 5: Integration & Testing | ⏳ Planned | End-to-end tests, performance optimization, docs |
 
-**Test Coverage**: 278 passing tests covering all implemented components
+**Test Coverage**: 298 passing tests covering all implemented components (20 new monitoring tests)
 
 ## File Structure Highlights
 
