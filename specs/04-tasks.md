@@ -143,67 +143,67 @@ End-to-end testing and documentation
   - [x] 10.10 Write tests using Docker test containers
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
+- [ ] 11. Create CLI Interface
+  - [ ] 11.1 Create `src/cli/main.py` with argparse
+  - [ ] 11.2 Implement `neuroscript validate` command
+  - [ ] 11.3 Implement `neuroscript compile` command
+  - [ ] 11.4 Implement `neuroscript run` command
+  - [ ] 11.5 Add `--input-shape` flag for constraint solving
+  - [ ] 11.6 Add `--output` flag for compilation target
+  - [ ] 11.7 Format validation errors for terminal output
+  - _Requirements: 7.1, 7.2, 7.3, 7.5_
+
 ### Phase 4: Example Blocks
 
-- [ ] 11. Create Linear Block
-  - [ ] 11.1 Create `blocks/linear/` directory
-  - [ ] 11.2 Write `blocks/linear/block.yaml` with capability specification
-  - [ ] 11.3 Implement `blocks/linear/module.py` with BlockInterface
-  - [ ] 11.4 Write `blocks/linear/test.py` with shape and parameter tests
-  - [ ] 11.5 Test with CapabilityParser and BlockRegistry
+- [ ] 12. Create Linear Block
+  - [ ] 12.1 Create `blocks/linear/` directory
+  - [ ] 12.2 Write `blocks/linear/block.yaml` with capability specification
+  - [ ] 12.3 Implement `blocks/linear/module.py` with BlockInterface
+  - [ ] 12.4 Write `blocks/linear/test.py` with shape and parameter tests
+  - [ ] 12.5 Test with CapabilityParser and BlockRegistry
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
-- [ ] 12. Create Embedding Block
-  - [ ] 12.1 Create `blocks/embedding/` directory
-  - [ ] 12.2 Write `blocks/embedding/block.yaml` with vocab/dim parameters
-  - [ ] 12.3 Implement `blocks/embedding/module.py` using nn.Embedding
-  - [ ] 12.4 Write unit tests for discrete input to dense output transformation
-  - [ ] 12.5 Test integration with GraphLoader
+- [ ] 13. Create Embedding Block
+  - [ ] 13.1 Create `blocks/embedding/` directory
+  - [ ] 13.2 Write `blocks/embedding/block.yaml` with vocab/dim parameters
+  - [ ] 13.3 Implement `blocks/embedding/module.py` using nn.Embedding
+  - [ ] 13.4 Write unit tests for discrete input to dense output transformation
+  - [ ] 13.5 Test integration with GraphLoader
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
-- [ ] 13. Create LayerNorm Block
-  - [ ] 13.1 Create `blocks/layernorm/` directory
-  - [ ] 13.2 Write `blocks/layernorm/block.yaml` with shape-preserving spec
-  - [ ] 13.3 Implement `blocks/layernorm/module.py` using nn.LayerNorm
-  - [ ] 13.4 Write tests verifying input shape == output shape
-  - [ ] 13.5 Test with ShapeValidator for shape preservation
+- [ ] 14. Create LayerNorm Block
+  - [ ] 14.1 Create `blocks/layernorm/` directory
+  - [ ] 14.2 Write `blocks/layernorm/block.yaml` with shape-preserving spec
+  - [ ] 14.3 Implement `blocks/layernorm/module.py` using nn.LayerNorm
+  - [ ] 14.4 Write tests verifying input shape == output shape
+  - [ ] 14.5 Test with ShapeValidator for shape preservation
   - _Requirements: 1.1, 1.2, 4.1, 10.1, 10.2, 10.3_
 
-- [ ] 14. Create Dropout Block
-  - [ ] 14.1 Create `blocks/dropout/` directory
-  - [ ] 14.2 Write `blocks/dropout/block.yaml` with dropout probability parameter
-  - [ ] 14.3 Implement `blocks/dropout/module.py` using nn.Dropout
-  - [ ] 14.4 Write tests for shape preservation and probability range validation
-  - [ ] 14.5 Test with ConstraintSolver for parameter validation
+- [ ] 15. Create Dropout Block
+  - [ ] 15.1 Create `blocks/dropout/` directory
+  - [ ] 15.2 Write `blocks/dropout/block.yaml` with dropout probability parameter
+  - [ ] 15.3 Implement `blocks/dropout/module.py` using nn.Dropout
+  - [ ] 15.4 Write tests for shape preservation and probability range validation
+  - [ ] 15.5 Test with ConstraintSolver for parameter validation
   - _Requirements: 1.1, 1.4, 10.1, 10.2, 10.3_
 
-- [ ] 15. Create Sequential Composition Block
-  - [ ] 15.1 Create `blocks/sequential/` directory
-  - [ ] 15.2 Write `blocks/sequential/block.yaml` accepting list of blocks
-  - [ ] 15.3 Implement `blocks/sequential/module.py` using nn.Sequential
-  - [ ] 15.4 Write tests composing Linear -> LayerNorm -> Dropout
-  - [ ] 15.5 Test with GraphValidator for multi-block composition
+- [ ] 16. Create Sequential Composition Block
+  - [ ] 16.1 Create `blocks/sequential/` directory
+  - [ ] 16.2 Write `blocks/sequential/block.yaml` accepting list of blocks
+  - [ ] 16.3 Implement `blocks/sequential/module.py` using nn.Sequential
+  - [ ] 16.4 Write tests composing Linear -> LayerNorm -> Dropout
+  - [ ] 16.5 Test with GraphValidator for multi-block composition
   - _Requirements: 3.2, 4.1, 4.5, 10.1, 10.2, 10.3_
 
 ### Phase 5: Integration & Testing
 
-- [ ] 16. Create End-to-End Example Architecture
-  - [ ] 16.1 Write `examples/simple_mlp.yaml` using Linear, LayerNorm, Dropout blocks
-  - [ ] 16.2 Validate architecture using GraphValidator
-  - [ ] 16.3 Compile to PyTorch using CompilationEngine
-  - [ ] 16.4 Execute in container using ContainerRuntime
-  - [ ] 16.5 Verify output correctness
+- [ ] 17. Create End-to-End Example Architecture
+  - [ ] 17.1 Write `examples/simple_mlp.yaml` using Linear, LayerNorm, Dropout blocks
+  - [ ] 17.2 Validate architecture using GraphValidator
+  - [ ] 17.3 Compile to PyTorch using CompilationEngine
+  - [ ] 17.4 Execute in container using ContainerRuntime
+  - [ ] 17.5 Verify output correctness
   - _Requirements: 3.1, 3.2, 4.1, 6.1, 8.1, 9.1_
-
-- [ ] 17. Create CLI Interface
-  - [ ] 17.1 Create `src/cli/main.py` with argparse
-  - [ ] 17.2 Implement `neuroscript validate` command
-  - [ ] 17.3 Implement `neuroscript compile` command
-  - [ ] 17.4 Implement `neuroscript run` command
-  - [ ] 17.5 Add `--input-shape` flag for constraint solving
-  - [ ] 17.6 Add `--output` flag for compilation target
-  - [ ] 17.7 Format validation errors for terminal output
-  - _Requirements: 7.1, 7.2, 7.3, 7.5_
 
 - [ ] 18. Write Integration Tests
   - [ ] 18.1 Create `test/integration/test_validation_pipeline.py`
