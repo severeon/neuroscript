@@ -1,0 +1,33 @@
+---
+title: TinyRecursiveMamba
+displayMode: 
+config:
+  theme: default
+flowchart:
+    defaultRenderer: "elk"
+    width: 100%
+__neuroscript:
+  io: #short for input and output being set to the same value
+    type: Tensor
+    dtype: ${CONFIG.data.type}
+    shape:
+    - ${CONFIG.data.dim_x}
+    - ${CONFIG.data.dim_y}
+---
+flowchart
+  entry@{shape: small-circle, label: "ENTRY", node: FunctionEntry}
+  exit@{shape: small-circle, label: "EXIT", node: FunctionEntry}
+  MambaLoop@{shape: rect, node: MambaBlock}
+  
+  subgraph TinyRecursiveMamba
+    direction LR
+    entry
+    --> TRM1@{shape: rect, node: TRMBlock, params: depth=CONFIG.trm.depth)}
+    --> MambaLoop
+    --> TRM2@{shape: rect, node: TRMBlock, params: depth=CONFIG.trm.depth)}
+    -->|$cycle < 3| TRM1
+    
+    MambaLoop -->|$loss > $max_loss| exit
+    
+    TRM2 -->|$cycle >= 3| exit@{shape: small-circle, label: "EXIT", node: FunctionEntry}
+  end

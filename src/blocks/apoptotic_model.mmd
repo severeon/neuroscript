@@ -1,0 +1,62 @@
+---
+title: ApoptoticModel
+displayMode: 
+config:
+  theme: default
+flowchart:
+    defaultRenderer: "elk"
+    width: 100%
+__neuroscript:
+  conf: # can be a string or list, values in higher idx overwrite those in lower idx, config is inherited by imported blocks
+    - $PROJECT_ROOT/configs/base_model.yml
+    - $PROJECT_ROOT/configs/supamodel4000.yml
+  io: # input and output can be defined individually
+    type: Tensor
+    dtype: ${CONFIG.data.type}
+    shape:
+    - ${CONFIG.data.dim_x}
+    - ${CONFIG.data.dim_y}
+  components: # default config for components in this block
+    Logger:
+      shape: brace
+      node: Logger
+      params:
+        path: $PROJECT_ROOT/logs
+    Data: 
+      # regular mermaid fields, but we'll handle variables
+      shape: event
+      # label should be automatically generated, make all relavent data params available in the label if possible for easy searching among hundreds of experiments
+      label: Tensor(${CONFIG.data.dim_x}x${CONFIG.data.dim_y}x${CONFIG.data.token_size}|${CONFIG.data.type})
+      
+      node: Tensor # loads either src/tensor.rs, or some rs file that identifies itself as containing the tensor node
+      params: # some nodes take params, either positional or key/val are allowed
+        shape:
+          # CONFIG is a dict/object loaded from __neuroscript.conf
+          - CONFIG.data.dim_x   
+          - CONFIG.data.dim_y
+          - CONFIG.data.token_size
+        dtype: CONFIG.data.type
+---
+flowchart
+  MatMul@{shape: brace-r, node: MatrixMultiply, label: "Matrix Multiply", params: boolTrue, boolFalse=false, num=1.234, str="asdf" }
+  subgraph Process:
+    direction LR
+    Input@{shape: small-circle, label: Input Layer, node: Start}
+      --> ApopLayer1@{shape: lean-l, label: Surface Layer, node: ApoptoticTransformerBlock}
+      --> HiddenLayers@{shape: rect, label: Hidden Layers, node: HomoPipeline, params: depth=CONFIG.model.n_hidden_layers, block_type=ApoptoticTransformerBlock}
+      --> Mamba1@{shape: rect, node: MambaBlock}
+      --> MatMul 
+      
+    ApopLayer1 --> TRMamba@{shape: pill, node: BlockReference, params: $PROJECT_ROOT/src/blocks/tiny_recursive_mamba.mmd}
+    
+    TRMamba 
+    --> MatMul
+    --> Mamba2@{shape: rect, node: MambaBlock}
+    -->|$shape fits 256x128x128| LargeOutput@{shape: pill, node: OutputBlock}
+%% `eq` asserts shapes are identical
+%% `fits` asserts the data in the pipe is of the same order or lower, each dimension is smaller than the gate
+%% `snug` asserts the data in the pipe is of the same order or lower, each dimension is smaller than the gate, and all input dimensions are evenly divisable by gate dimensions
+    Mamba2 -->|$shape fits 64x64x64| SmallOutput@{shape: pill, node: OutputBlock}
+    
+    TRMamba --> Logger
+  end
