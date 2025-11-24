@@ -291,11 +291,11 @@ version: 1.0.0
 capabilities:
   inputs:
     x:
-      shape: [*, in_features]
+      shape: ["*", in_features]
       dtype: [float32, float16]
   outputs:
     y:
-      shape: [*, out_features]
+      shape: ["*", out_features]
       dtype: [float32, float16]
   params:
     in_features:

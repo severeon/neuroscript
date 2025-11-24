@@ -15,6 +15,7 @@ try:
     import torch
     TORCH_AVAILABLE = True
 except ImportError:
+    torch = None  # type: ignore
     TORCH_AVAILABLE = False
 
 # Import psutil for CPU/memory detection
@@ -22,6 +23,7 @@ try:
     import psutil
     PSUTIL_AVAILABLE = True
 except ImportError:
+    psutil = None  # type: ignore
     PSUTIL_AVAILABLE = False
 
 logger = logging.getLogger(__name__)

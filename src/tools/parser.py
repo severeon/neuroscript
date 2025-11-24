@@ -51,6 +51,18 @@ def parse_node_attrs(attrs_raw: str) -> Dict[str, Any]:
                 out['type'] = t
                 out['params'] = params
                 continue
+        # params: key=val, flag - parse as parameter dictionary
+        if k == 'params':
+            params = {}
+            # simple params parsing: key=val, flag
+            for part in re.split(r'\s*,\s*', v):
+                if '=' in part:
+                    kk, vv = part.split('=', 1)
+                    params[kk.strip()] = yaml.safe_load(vv.strip())
+                else:
+                    params[part.strip()] = True
+            out[k] = params
+            continue
         out[k] = yaml.safe_load(v)
     return out
 

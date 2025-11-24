@@ -1,0 +1,10 @@
+# Core dependencies
+pyyaml>=6.0
+
+# Testing dependencies
+pytest>=7.0
+
+# Optional hardware detection dependencies
+# Install with: pip install -r requirements.txt or pip install torch psutil
+torch>=2.0; platform_machine != "aarch64"  # For CUDA detection
+psutil>=5.9  # For CPU/memory detection
