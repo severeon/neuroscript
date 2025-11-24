@@ -29,44 +29,44 @@ End-to-end testing and documentation
 
 ### Phase 1: Core Infrastructure
 
-- [ ] 1. Implement BlockInterface Protocol
-  - [ ] 1.1 Create `src/core/block_interface.py`
-  - [ ] 1.2 Define `BlockInterface` protocol class with `get_capabilities()`, `__init__()`, `forward()` methods
-  - [ ] 1.3 Define `BlockCapability` dataclass with inputs/outputs/params/constraints fields
-  - [ ] 1.4 Write unit tests for protocol validation
+- [x] 1. Implement BlockInterface Protocol
+  - [x] 1.1 Create `src/core/block_interface.py`
+  - [x] 1.2 Define `BlockInterface` protocol class with `get_capabilities()`, `__init__()`, `forward()` methods
+  - [x] 1.3 Define `BlockCapability` dataclass with inputs/outputs/params/constraints fields
+  - [x] 1.4 Write unit tests for protocol validation
   - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 2. Implement CapabilityParser
-  - [ ] 2.1 Create `src/core/capability_parser.py`
-  - [ ] 2.2 Implement `parse_file()` method to load and parse block.yaml using yamale
-  - [ ] 2.3 Implement `extract_dimensions()` to parse shape patterns like "[batch, seq, dim]"
-  - [ ] 2.4 Implement `parse_constraint()` to convert constraint strings to DimensionConstraint objects
-  - [ ] 2.5 Implement `validate_param_range()` to check parameter values against range constraints
-  - [ ] 2.6 Add error handling for malformed YAML with descriptive error messages
-  - [ ] 2.7 Write unit tests for each parsing method
+- [x] 2. Implement CapabilityParser
+  - [x] 2.1 Create `src/core/capability_parser.py`
+  - [x] 2.2 Implement `parse_file()` method to load and parse block.yaml using yamale
+  - [x] 2.3 Implement `extract_dimensions()` to parse shape patterns like "[batch, seq, dim]"
+  - [x] 2.4 Implement `parse_constraint()` to convert constraint strings to DimensionConstraint objects
+  - [x] 2.5 Implement `validate_param_range()` to check parameter values against range constraints
+  - [x] 2.6 Add error handling for malformed YAML with descriptive error messages
+  - [x] 2.7 Write unit tests for each parsing method
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 3. Implement BlockRegistry
-  - [ ] 3.1 Create `src/core/block_registry.py`
-  - [ ] 3.2 Implement `__init__()` to initialize registry and call `_discover_blocks()`
-  - [ ] 3.3 Implement `_discover_blocks()` to recursively scan blocks/ directory
-  - [ ] 3.4 Implement `get_block()` to retrieve parsed capabilities by name
-  - [ ] 3.5 Implement `list_blocks()` to return all registered block names
-  - [ ] 3.6 Implement `validate_interface()` to check BlockInterface protocol compliance
-  - [ ] 3.7 Add warning logs for missing block.yaml files
-  - [ ] 3.8 Add error handling for duplicate block names
-  - [ ] 3.9 Write unit tests with mock block directories
+- [x] 3. Implement BlockRegistry
+  - [x] 3.1 Create `src/core/block_registry.py`
+  - [x] 3.2 Implement `__init__()` to initialize registry and call `_discover_blocks()`
+  - [x] 3.3 Implement `_discover_blocks()` to recursively scan blocks/ directory
+  - [x] 3.4 Implement `get_block()` to retrieve parsed capabilities by name
+  - [x] 3.5 Implement `list_blocks()` to return all registered block names
+  - [x] 3.6 Implement `validate_interface()` to check BlockInterface protocol compliance
+  - [x] 3.7 Add warning logs for missing block.yaml files
+  - [x] 3.8 Add error handling for duplicate block names
+  - [x] 3.9 Write unit tests with mock block directories
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 10.4, 10.5_
 
-- [ ] 4. Implement GraphLoader
-  - [ ] 4.1 Create `src/core/graph_loader.py`
-  - [ ] 4.2 Define `GraphNode`, `GraphEdge`, `ArchitectureGraph` dataclasses
-  - [ ] 4.3 Implement `load()` to parse architecture YAML files
-  - [ ] 4.4 Implement `parse_topology()` to convert topology strings into GraphEdge objects
-  - [ ] 4.5 Implement `validate_references()` to check all blocks exist in registry
-  - [ ] 4.6 Implement `validate_parameters()` to verify component params match block schema
-  - [ ] 4.7 Implement `detect_cycles()` using depth-first search
-  - [ ] 4.8 Write unit tests for valid and invalid architectures
+- [x] 4. Implement GraphLoader
+  - [x] 4.1 Create `src/core/graph_loader.py`
+  - [x] 4.2 Define `GraphNode`, `GraphEdge`, `ArchitectureGraph` dataclasses
+  - [x] 4.3 Implement `load()` to parse architecture YAML files
+  - [x] 4.4 Implement `parse_topology()` to convert topology strings into GraphEdge objects
+  - [x] 4.5 Implement `validate_references()` to check all blocks exist in registry
+  - [x] 4.6 Implement `validate_parameters()` to verify component params match block schema
+  - [x] 4.7 Implement `detect_cycles()` using depth-first search
+  - [x] 4.8 Write unit tests for valid and invalid architectures
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
 ### Phase 2: Validation Pipeline
