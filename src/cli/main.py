@@ -6,12 +6,13 @@ import sys
 
 # Core imports
 from core.block_registry import BlockRegistry
-from core.constraint_solver import Configuration
+from core.constraint_solver import Configuration, ConstraintSolver
 from core.graph_loader import GraphLoader
 from core.graph_validator import GraphValidator
 from core.compilation_engine import CompilationEngine
 from core.container_runtime import ContainerRuntime
 from core.hardware_detector import HardwareDetector
+from core.shape_validator import ShapeValidator
 
 
 def main():
@@ -73,8 +74,10 @@ def _run_validate(args):
     registry = BlockRegistry()
     hardware = HardwareDetector()
     loader = GraphLoader(registry)
+    shapeValidator = ShapeValidator()
     graph = loader.load(args.architecture)
-    validator = GraphValidator(graph, registry, hardware)
+    constraint_solver = ConstraintSolver(graph=graph, registry=registry)
+    validator = GraphValidator(graph, registry, hardware, shape_validator=shapeValidator, constraint_solver=constraint_solver)
     result = validator.validate()
     if result.valid:
         print('✅ Architecture is valid!')
@@ -89,8 +92,10 @@ def _run_compile(args):
     registry = BlockRegistry()
     hardware = HardwareDetector()
     loader = GraphLoader(registry)
+    shapeValidator = ShapeValidator()
     graph = loader.load(args.architecture)
-    validator = GraphValidator(graph, registry, hardware)
+    constraint_solver = ConstraintSolver(graph=graph, registry=registry)
+    validator = GraphValidator(graph, registry, hardware, shape_validator=shapeValidator, constraint_solver=constraint_solver)
     result = validator.validate()
     if not result.valid:
         print('❌ Validation failed. Cannot compile.')
@@ -99,8 +104,7 @@ def _run_compile(args):
         sys.exit(1)
 
     engine = CompilationEngine(graph=graph, config=Configuration(), registry=registry)
-    code = engine.compile(output_path=Path("./"))
-    args.output.write_text(code)
+    engine.compile(Path(args.output))
     print(f'✅ Compiled to {args.output}')
 
 
