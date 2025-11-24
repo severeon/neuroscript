@@ -250,7 +250,6 @@ $ neuroscript validate architecture.yaml --input-shape [32,128,512]
   Peak memory: 8.4GB
   Estimated FLOPs: 2.1T
 
-<<<<<<< Updated upstream
 IR generated from NeuroScript feeds directly into:
 
 * NACE’s architectural compiler
@@ -331,13 +330,6 @@ flowchart TD
 
   TRM2 -->|$cycle < 3| TRM1
   TRM2 -->|$cycle >= 3| exit
-=======
-# 5. Compile
-$ neuroscript compile architecture.yaml \
-    --input-shape [32,128,512] \
-    --framework pytorch \
-    --output model.py
->>>>>>> Stashed changes
 ```
 
 ---
@@ -412,6 +404,14 @@ capabilities:
     - query.shape[2] == key.shape[2]  # dim must match
 ```
 
+### 5. Compile
+
+```
+$ neuroscript compile architecture.yaml \
+    --input-shape [32,128,512] \
+    --framework pytorch \
+    --output model.py
+```
 ---
 
 ## Fork-and-Extend Workflow

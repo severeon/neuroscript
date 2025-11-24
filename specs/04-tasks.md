@@ -71,14 +71,14 @@ End-to-end testing and documentation
 
 ### Phase 2: Validation Pipeline
 
-- [ ] 5. Implement ShapeValidator
-  - [ ] 5.1 Create `src/core/shape_validator.py`
-  - [ ] 5.2 Define `ShapePattern` and `UnificationResult` dataclasses
-  - [ ] 5.3 Implement `unify()` to match output and input shape patterns
-  - [ ] 5.4 Implement `match_dimension()` to handle wildcards and named dimensions
-  - [ ] 5.5 Implement `validate_consistency()` to check dimension bindings
-  - [ ] 5.6 Add error reporting for shape mismatches with expected/actual shapes
-  - [ ] 5.7 Write unit tests for compatible and incompatible shape pairs
+- [x] 5. Implement ShapeValidator
+  - [x] 5.1 Create `src/core/shape_validator.py`
+  - [x] 5.2 Define `ShapePattern` and `UnificationResult` dataclasses
+  - [x] 5.3 Implement `unify()` to match output and input shape patterns
+  - [x] 5.4 Implement `match_dimension()` to handle wildcards and named dimensions
+  - [x] 5.5 Implement `validate_consistency()` to check dimension bindings
+  - [x] 5.6 Add error reporting for shape mismatches with expected/actual shapes
+  - [x] 5.7 Write unit tests for compatible and incompatible shape pairs
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
 - [ ] 6. Implement HardwareDetector

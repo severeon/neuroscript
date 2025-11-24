@@ -5,6 +5,12 @@ from .capability_parser import CapabilityParser
 from .block_registry import BlockRegistry
 from .graph_loader import GraphLoader, ArchitectureGraph, GraphNode, GraphEdge
 from .constraint_solver import ConstraintSolver, Configuration
+from .shape_validator import (
+    ShapeValidator,
+    ShapePattern,
+    UnificationResult,
+    parse_shape_pattern,
+)
 
 __all__ = [
     "BlockInterface",
@@ -17,4 +23,8 @@ __all__ = [
     "GraphEdge",
     "ConstraintSolver",
     "Configuration",
+    "ShapeValidator",
+    "ShapePattern",
+    "UnificationResult",
+    "parse_shape_pattern",
 ]
