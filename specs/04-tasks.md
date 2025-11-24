@@ -143,14 +143,14 @@ End-to-end testing and documentation
   - [x] 10.10 Write tests using Docker test containers
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 11. Create CLI Interface
-  - [ ] 11.1 Create `src/cli/main.py` with argparse
-  - [ ] 11.2 Implement `neuroscript validate` command
-  - [ ] 11.3 Implement `neuroscript compile` command
-  - [ ] 11.4 Implement `neuroscript run` command
-  - [ ] 11.5 Add `--input-shape` flag for constraint solving
-  - [ ] 11.6 Add `--output` flag for compilation target
-  - [ ] 11.7 Format validation errors for terminal output
+- [x] 11. Create CLI Interface
+  - [x] 11.1 Create `src/cli/main.py` with argparse
+  - [x] 11.2 Implement `neuroscript validate` command
+  - [x] 11.3 Implement `neuroscript compile` command
+  - [x] 11.4 Implement `neuroscript run` command
+  - [x] 11.5 Add `--input-shape` flag for constraint solving
+  - [x] 11.6 Add `--output` flag for compilation target
+  - [x] 11.7 Format validation errors for terminal output
   - _Requirements: 7.1, 7.2, 7.3, 7.5_
 
 ### Phase 4: Example Blocks
