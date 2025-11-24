@@ -81,15 +81,15 @@ End-to-end testing and documentation
   - [ ] 5.7 Write unit tests for compatible and incompatible shape pairs
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 6. Implement HardwareDetector
-  - [ ] 6.1 Create `src/core/hardware_detector.py`
-  - [ ] 6.2 Define `HardwareCapabilities` dataclass
-  - [ ] 6.3 Implement `check_cuda_available()` using torch.cuda.is_available()
-  - [ ] 6.4 Implement `get_compute_capability()` using torch.cuda.get_device_capability()
-  - [ ] 6.5 Implement `_detect()` to query CPU cores and memory using psutil
-  - [ ] 6.6 Implement `is_block_compatible()` to check hardware requirements
-  - [ ] 6.7 Add memory estimation and warning for blocks exceeding available resources
-  - [ ] 6.8 Write unit tests with mocked hardware detection
+- [x] 6. Implement HardwareDetector
+  - [x] 6.1 Create `src/core/hardware_detector.py`
+  - [x] 6.2 Define `HardwareCapabilities` dataclass
+  - [x] 6.3 Implement `check_cuda_available()` using torch.cuda.is_available()
+  - [x] 6.4 Implement `get_compute_capability()` using torch.cuda.get_device_capability()
+  - [x] 6.5 Implement `_detect()` to query CPU cores and memory using psutil
+  - [x] 6.6 Implement `is_block_compatible()` to check hardware requirements
+  - [x] 6.7 Add memory estimation and warning for blocks exceeding available resources
+  - [x] 6.8 Write unit tests with mocked hardware detection
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 7. Implement ConstraintSolver
