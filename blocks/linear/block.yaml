@@ -1,0 +1,35 @@
+name: Linear
+version: 1.0.0
+
+capabilities:
+  inputs:
+    x:
+      type: Tensor
+      dtype: [float32, float16, bfloat16]
+      shape: ["*", "in_features"]
+
+  outputs:
+    y:
+      type: Tensor
+      dtype: input.x.dtype
+      shape: ["*", "out_features"]
+
+  params:
+    in_features:
+      type: int
+      range: [1, 100000]
+      required: true
+
+    out_features:
+      type: int
+      range: [1, 100000]
+      required: true
+
+    bias:
+      type: bool
+      default: true
+      required: false
+
+  constraints:
+    - in_features >= 1
+    - out_features >= 1
