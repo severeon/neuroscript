@@ -258,23 +258,86 @@ IR generated from NeuroScript feeds directly into:
 
 ---
 
+## 🚀 Current Capabilities (Post Phase 2)
+
+### ✅ Validation Pipeline Complete
+
+The NeuroScript v2 validation system is now fully functional with these capabilities:
+
+**Shape Validation**
+- Shape pattern unification with wildcards (`*`, named dimensions)
+- Dimension consistency checking across graph connections
+- Clear error messages with expected vs actual shapes
+- Support for shape transformations and preservation
+
+**Hardware Detection**
+- Automatic CUDA availability detection
+- GPU compute capability and memory reporting
+- CPU core and system memory detection
+- Hardware compatibility checking for blocks
+- Memory usage estimation and warnings
+
+**Constraint Solving**
+- Enumerates all valid dimension configurations
+- Detects conflicting constraints early
+- Applies parameter ranges and enumerations
+- Supports modulo and equality constraints
+- Provides configuration suggestions
+
+**Graph Validation**
+- End-to-end validation orchestration
+- Actionable error messages with fix suggestions
+- Block reference validation with fuzzy suggestions
+- Cycle detection and topology validation
+- Hardware compatibility integration
+
+### 📊 Test Coverage
+
+- **199 passing tests** covering all Phase 2 components
+- Full unit test coverage for individual validators
+- Integration tests for end-to-end validation
+- Error message quality and suggestion testing
+
+---
+
+## 🐛 Known Issues & Limitations
+
+### Current Limitations
+- No block implementations yet (Phase 4 pending)
+- No compilation to executable code (Phase 3 pending)
+- YAML configuration files not yet implemented
+- No Docker container execution (Phase 3 pending)
+
+### Dependencies
+- Hardware detection requires `torch` and `psutil` (optional dependencies)
+- Full functionality available when dependencies are installed
+
+### Next Steps
+- Phase 3: Compilation Engine and Container Runtime
+- Phase 4: Example block implementations
+- Phase 5: Integration testing and documentation
+
+---
+
 ## NeuroScript v2 Implementation Status
 
 The v2 system is a complete type-safe neural architecture composition system. Progress:
 
-- ✅ Phase 1: Core Infrastructure (Tasks 1-4)
-  - BlockInterface Protocol
-  - CapabilityParser
-  - BlockRegistry
-  - GraphLoader
-- 🔄 Phase 2: Validation Pipeline (Tasks 5-8)
-  - ✅ HardwareDetector (Task 6)
-  - ✅ ShapeValidator (Task 5)
-  - ✅ ConstraintSolver (Task 7)
-  - ⏳ GraphValidator (Task 8)
-- ⏳ Phase 3: Compilation & Execution (Tasks 9-10)
-- ⏳ Phase 4: Example Blocks (Tasks 11-15)
-- ⏳ Phase 5: Integration & Testing (Tasks 16-21)
+- ✅ **Phase 1: Core Infrastructure (Tasks 1-4)** - Complete
+  - ✅ BlockInterface Protocol
+  - ✅ CapabilityParser
+  - ✅ BlockRegistry
+  - ✅ GraphLoader
+- ✅ **Phase 2: Validation Pipeline (Tasks 5-8)** - Complete
+  - ✅ ShapeValidator (Task 5) - Handles shape unification and wildcard matching
+  - ✅ HardwareDetector (Task 6) - CUDA/CPU/memory detection and compatibility
+  - ✅ ConstraintSolver (Task 7) - Enumerates valid configurations and detects conflicts
+  - ✅ GraphValidator (Task 8) - Orchestrates validation with actionable error messages
+- ⏳ **Phase 3: Compilation & Execution (Tasks 9-10)** - Next
+- ⏳ **Phase 4: Example Blocks (Tasks 11-15)** - Planned
+- ⏳ **Phase 5: Integration & Testing (Tasks 16-21)** - Planned
+
+**Current Status:** Phase 2 validation pipeline is fully implemented and tested with 199 passing tests. Ready for Phase 3 implementation.
 
 See `specs/04-tasks.md` for detailed task breakdown.
 
@@ -282,30 +345,38 @@ See `specs/04-tasks.md` for detailed task breakdown.
 
 ## 🔭 Roadmap
 
-### **0.1 — Current**
+### **✅ 2.0 — Phase 2 Complete (Current)**
 
-* Working parser
-* Language spec
-* Valid Mermaid subset
-* Node/type extraction
+* ✅ Complete validation pipeline implemented
+* ✅ Shape unification with wildcards
+* ✅ Hardware detection and compatibility
+* ✅ Constraint solving and configuration enumeration
+* ✅ Actionable error messages with suggestions
+* ✅ 199 passing tests
 
-### **0.2 — Next**
+### **🔄 3.0 — Phase 3: Compilation & Execution (Next)**
 
-* Full config resolution
-* Guard expression evaluator
-* Shape/type checker
+* [ ] CompilationEngine - Generate PyTorch code from validated architectures
+* [ ] ContainerRuntime - Execute models in Docker with resource limits
+* [ ] Shape assertions in generated code
+* [ ] Resource-aware execution planning
+* [ ] Integration testing with real PyTorch blocks
 
-### **0.3 — NACE Integration**
+### **⏳ 4.0 — Phase 4: Example Blocks**
 
-* Live graph editing
-* Inline warnings/errors
-* IR ↔ Rust serialization
+* [ ] Create core blocks: Linear, Embedding, Attention, Norm, Activation
+* [ ] Define comprehensive capability specifications
+* [ ] Implement PyTorch modules for each block
+* [ ] Validate with real architectures
+* [ ] Documentation and examples
 
-### **0.4 — Ecosystem Integration**
+### **⏳ 5.0 — Phase 5: Integration & Testing**
 
-* Phylogenesis Repo: shared architecture blocks
-* ARIES experiment autogeneration
-* ForkPoint lineage linking
+* [ ] End-to-end testing with compilation
+* [ ] Performance optimization
+* [ ] Documentation site
+* [ ] Community contributions workflow
+* [ ] Production deployment tools
 
 ---
 
