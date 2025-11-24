@@ -61,7 +61,7 @@ def test_compile_success(mock_write, mock_engine, mock_validator, mock_loader, c
 
 @patch('src.cli.main.ContainerRuntime')
 def test_run_success(mock_runtime, capsys):
-    mock_result = ExecutionResult(success=True, stdout='Success output')
+    mock_result = ExecutionResult(exit_code=0, stdout='Success output', stderr="", container_id="container-id", oom_killed=False, execution_time_seconds=1)
     mock_runtime.return_value.execute.return_value = mock_result
 
     with patch.object(sys, 'argv', ['neuroscript', 'run', 'model.py']):
