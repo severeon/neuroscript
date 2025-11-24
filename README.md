@@ -267,11 +267,11 @@ The v2 system is a complete type-safe neural architecture composition system. Pr
   - CapabilityParser
   - BlockRegistry
   - GraphLoader
-- ⏳ Phase 2: Validation Pipeline (Tasks 5-8)
-  - ✅ Task 7: ConstraintSolver (constraint satisfaction, configuration enumeration)
-  - ⏳ Task 5: ShapeValidator
-  - ⏳ Task 6: HardwareDetector
-  - ⏳ Task 8: GraphValidator
+- 🔄 Phase 2: Validation Pipeline (Tasks 5-8)
+  - ✅ HardwareDetector (Task 6)
+  - ✅ ShapeValidator (Task 5)
+  - ✅ ConstraintSolver (Task 7)
+  - ⏳ GraphValidator (Task 8)
 - ⏳ Phase 3: Compilation & Execution (Tasks 9-10)
 - ⏳ Phase 4: Example Blocks (Tasks 11-15)
 - ⏳ Phase 5: Integration & Testing (Tasks 16-21)

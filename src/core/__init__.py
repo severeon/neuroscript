@@ -4,6 +4,7 @@ from .block_interface import BlockInterface, BlockCapability
 from .capability_parser import CapabilityParser
 from .block_registry import BlockRegistry
 from .graph_loader import GraphLoader, ArchitectureGraph, GraphNode, GraphEdge
+from .hardware_detector import HardwareDetector, HardwareCapabilities
 from .constraint_solver import ConstraintSolver, Configuration
 from .shape_validator import (
     ShapeValidator,
@@ -21,6 +22,8 @@ __all__ = [
     "ArchitectureGraph",
     "GraphNode",
     "GraphEdge",
+    "HardwareDetector",
+    "HardwareCapabilities",
     "ConstraintSolver",
     "Configuration",
     "ShapeValidator",
