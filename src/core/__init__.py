@@ -13,6 +13,8 @@ from .shape_validator import (
     parse_shape_pattern,
 )
 from .compilation_engine import CompilationEngine, CompilationError
+from .graph_validator import GraphValidator, ValidationError, ValidationResult
+from .container_runtime import ContainerRuntime, ExecutionResult, ContainerRuntimeError
 
 __all__ = [
     "BlockInterface",
@@ -33,4 +35,10 @@ __all__ = [
     "parse_shape_pattern",
     "CompilationEngine",
     "CompilationError",
+    "GraphValidator",
+    "ValidationError",
+    "ValidationResult",
+    "ContainerRuntime",
+    "ExecutionResult",
+    "ContainerRuntimeError",
 ]

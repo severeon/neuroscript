@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 from .block_interface import BlockCapability, BlockInterface
 from .capability_parser import CapabilityParser, CapabilityParseError
@@ -130,7 +130,7 @@ class BlockRegistry:
         """
         return sorted(self._registry.keys())
 
-    def validate_interface(self, block_instance: any) -> None:
+    def validate_interface(self, block_instance: Any) -> None:
         """
         Validate that a block instance implements BlockInterface.
 

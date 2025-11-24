@@ -14,8 +14,8 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 import difflib
 
-from .block_registry import BlockRegistry
-from .constraint_solver import ConstraintSolver, Configuration
+from .block_registry import BlockRegistry, BlockRegistryError
+from .constraint_solver import ConstraintSolver, Configuration, ConstraintSolverError
 from .graph_loader import ArchitectureGraph, GraphEdge, GraphNode
 from .hardware_detector import HardwareDetector
 from .shape_validator import (
@@ -249,7 +249,7 @@ class GraphValidator:
             try:
                 source_cap = self.registry.get_block(source_node.block_id)
                 target_cap = self.registry.get_block(target_node.block_id)
-            except Exception as e:
+            except BlockRegistryError as e:
                 logger.warning(f"Could not get block capabilities: {e}")
                 continue
 
@@ -339,7 +339,7 @@ class GraphValidator:
                     ]
                 )
                 result.add_error(error)
-        except Exception as e:
+        except ConstraintSolverError as e:
             logger.warning(f"Error during constraint validation: {e}")
             error = ValidationError(
                 error_type="constraint_error",
@@ -381,7 +381,7 @@ class GraphValidator:
                 for warning in warnings:
                     result.add_warning(f"Block '{node.id}': {warning}")
 
-            except Exception as e:
+            except BlockRegistryError as e:
                 logger.debug(f"Could not check hardware compatibility for {node.id}: {e}")
 
     def _generate_configurations(self, result: ValidationResult) -> None:
@@ -407,7 +407,7 @@ class GraphValidator:
                     ]
                 )
                 result.add_error(error)
-        except Exception as e:
+        except ConstraintSolverError as e:
             logger.warning(f"Error generating configurations: {e}")
             error = ValidationError(
                 error_type="configuration_error",

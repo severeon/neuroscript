@@ -152,7 +152,7 @@ class CompilationEngine:
 
             logger.info(f"Successfully compiled to {output_path}")
 
-        except Exception as e:
+        except (OSError, IOError, ValueError, RuntimeError, KeyError, TypeError, AttributeError) as e:
             raise CompilationError(f"Failed to compile architecture: {e}") from e
 
     def _compute_execution_order(self) -> List[str]:
@@ -607,6 +607,6 @@ class CompilationEngine:
         except ImportError:
             logger.debug("black not available, skipping code formatting")
             return code
-        except Exception as e:
+        except (ValueError, RuntimeError) as e:
             logger.warning(f"Failed to format code with black: {e}")
             return code

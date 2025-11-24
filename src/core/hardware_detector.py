@@ -119,7 +119,7 @@ class HardwareDetector:
 
         try:
             return torch.cuda.is_available()
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.warning(f"Error checking CUDA availability: {e}")
             return False
 
@@ -137,7 +137,7 @@ class HardwareDetector:
         try:
             # Get capability for device 0 (primary GPU)
             return torch.cuda.get_device_capability(0)
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.warning(f"Error getting CUDA compute capability: {e}")
             return None
 
@@ -156,7 +156,7 @@ class HardwareDetector:
             # Get total memory for device 0
             total_memory_bytes = torch.cuda.get_device_properties(0).total_memory
             return total_memory_bytes / (1024 ** 3)  # Convert to GB
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.warning(f"Error getting GPU memory: {e}")
             return None
 
@@ -176,7 +176,7 @@ class HardwareDetector:
             # Use physical cores (not hyperthreads)
             cores = psutil.cpu_count(logical=False)
             return cores if cores is not None else 1
-        except Exception as e:
+        except (AttributeError, RuntimeError) as e:
             logger.warning(f"Error detecting CPU cores: {e}")
             return 1
 
@@ -195,7 +195,7 @@ class HardwareDetector:
         try:
             memory = psutil.virtual_memory()
             return memory.total / (1024 ** 3)  # Convert to GB
-        except Exception as e:
+        except (AttributeError, RuntimeError) as e:
             logger.warning(f"Error detecting system memory: {e}")
             return 1.0
 

@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from .block_interface import BlockCapability, DimensionConstraint
-from .block_registry import BlockRegistry
+from .block_registry import BlockRegistry, BlockRegistryError
 from .graph_loader import ArchitectureGraph, GraphNode
 
 logger = logging.getLogger(__name__)
@@ -235,7 +235,7 @@ class ConstraintSolver:
             try:
                 block_cap = self.registry.get_block(node.block_id)
                 self._collect_from_block(block_cap, node)
-            except Exception as e:
+            except BlockRegistryError as e:
                 logger.warning(
                     f"Failed to get block capability for {node.block_id}: {e}"
                 )
@@ -551,15 +551,19 @@ class ConstraintSolver:
         elif constraint.constraint_type == "expression":
             # For complex expressions, try to evaluate with bindings
             try:
-                # Create a safe evaluation environment
+                # Create a safe evaluation environment with no built-in functions
                 env = bindings.copy()
                 # Simple evaluation - this could be enhanced with a proper expression evaluator
                 result = eval(constraint.expression, {"__builtins__": {}}, env)
                 return bool(result)
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, NameError, ZeroDivisionError) as e:
                 logger.debug(f"Could not evaluate constraint '{constraint.expression}': {e}")
                 # If we can't evaluate, assume it's satisfied
                 return True
+            except SyntaxError as e:
+                logger.warning(f"Invalid constraint expression syntax '{constraint.expression}': {e}")
+                # Invalid syntax - assume constraint is not satisfied
+                return False
 
         return True
 
@@ -601,7 +605,7 @@ class ConstraintSolver:
                 # Estimate memory (4 bytes per float32 parameter)
                 total_memory += node_params * 4 / (1024**3)  # Convert to GB
 
-            except Exception as e:
+            except (BlockRegistryError, AttributeError, KeyError, TypeError) as e:
                 logger.debug(f"Could not estimate resources for {node.block_id}: {e}")
                 continue
 
