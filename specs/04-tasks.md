@@ -92,16 +92,16 @@ End-to-end testing and documentation
   - [ ] 6.8 Write unit tests with mocked hardware detection
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 7. Implement ConstraintSolver
-  - [ ] 7.1 Create `src/core/constraint_solver.py`
-  - [ ] 7.2 Define `Configuration` dataclass
-  - [ ] 7.3 Implement `solve()` to enumerate valid dimension configurations
-  - [ ] 7.4 Implement constraint propagation algorithm
-  - [ ] 7.5 Implement `check_satisfiable()` to detect unsatisfiable constraints
-  - [ ] 7.6 Implement `apply_configuration()` to bind dimensions to values
-  - [ ] 7.7 Implement `detect_conflicts()` to find conflicting constraints
-  - [ ] 7.8 Add parameter count and memory estimation for each configuration
-  - [ ] 7.9 Write unit tests for solvable and unsolvable constraint sets
+- [x] 7. Implement ConstraintSolver
+  - [x] 7.1 Create `src/core/constraint_solver.py`
+  - [x] 7.2 Define `Configuration` dataclass
+  - [x] 7.3 Implement `solve()` to enumerate valid dimension configurations
+  - [x] 7.4 Implement constraint propagation algorithm
+  - [x] 7.5 Implement `check_satisfiable()` to detect unsatisfiable constraints
+  - [x] 7.6 Implement `apply_configuration()` to bind dimensions to values
+  - [x] 7.7 Implement `detect_conflicts()` to find conflicting constraints
+  - [x] 7.8 Add parameter count and memory estimation for each configuration
+  - [x] 7.9 Write unit tests for solvable and unsolvable constraint sets
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
 - [ ] 8. Implement GraphValidator

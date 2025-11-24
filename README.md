@@ -250,7 +250,6 @@ $ neuroscript validate architecture.yaml --input-shape [32,128,512]
   Peak memory: 8.4GB
   Estimated FLOPs: 2.1T
 
-<<<<<<< Updated upstream
 IR generated from NeuroScript feeds directly into:
 
 * NACE’s architectural compiler
@@ -268,11 +267,11 @@ The v2 system is a complete type-safe neural architecture composition system. Pr
   - CapabilityParser
   - BlockRegistry
   - GraphLoader
-- 🚧 Phase 2: Validation Pipeline (Tasks 5-8)
-  - ✅ ShapeValidator (Task 5)
-  - ⏳ HardwareDetector (Task 6)
-  - ⏳ ConstraintSolver (Task 7)
-  - ⏳ GraphValidator (Task 8)
+- ⏳ Phase 2: Validation Pipeline (Tasks 5-8)
+  - ✅ Task 7: ConstraintSolver (constraint satisfaction, configuration enumeration)
+  - ⏳ Task 5: ShapeValidator
+  - ⏳ Task 6: HardwareDetector
+  - ⏳ Task 8: GraphValidator
 - ⏳ Phase 3: Compilation & Execution (Tasks 9-10)
 - ⏳ Phase 4: Example Blocks (Tasks 11-15)
 - ⏳ Phase 5: Integration & Testing (Tasks 16-21)
@@ -331,13 +330,6 @@ flowchart TD
 
   TRM2 -->|$cycle < 3| TRM1
   TRM2 -->|$cycle >= 3| exit
-=======
-# 5. Compile
-$ neuroscript compile architecture.yaml \
-    --input-shape [32,128,512] \
-    --framework pytorch \
-    --output model.py
->>>>>>> Stashed changes
 ```
 
 ---
@@ -412,6 +404,14 @@ capabilities:
     - query.shape[2] == key.shape[2]  # dim must match
 ```
 
+### 5. Compile
+
+```
+$ neuroscript compile architecture.yaml \
+    --input-shape [32,128,512] \
+    --framework pytorch \
+    --output model.py
+```
 ---
 
 ## Fork-and-Extend Workflow

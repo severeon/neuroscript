@@ -25,8 +25,8 @@ class CapabilityParser:
 
     # Regex pattern for parsing shape patterns like "[batch, seq, dim]"
     SHAPE_PATTERN_RE = re.compile(r'\[([^\]]+)\]')
-    # Regex pattern for parsing constraints like "dim % 8 == 0"
-    CONSTRAINT_RE = re.compile(r'^[a-zA-Z0-9_\.\[\]%\s<>=!&|+\-\*\(\)]+$')
+    # Regex pattern for parsing constraints like "dim % 8 == 0" or "dim in [256, 512]"
+    CONSTRAINT_RE = re.compile(r'^[a-zA-Z0-9_\.\[\]%\s<>=!&|+\-\*\(\),]+$')
 
     def parse_file(self, file_path: str) -> BlockCapability:
         """
