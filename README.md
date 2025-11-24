@@ -805,3 +805,103 @@ $ git push
 5. **Reproducible by default** - config + version = exact model
 
 The validation IS the product. Everything else is tooling around that core value.
+
+---
+
+## Installation
+
+Install NeuroScript using pip:
+
+```bash
+# Install basic package
+pip install -e .
+
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Install with CUDA support
+pip install -e ".[cuda]"
+
+# Install with all dependencies
+pip install -e ".[full]"
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src --cov-report=html
+
+# Run specific test file
+pytest test/core/test_graph_validator.py
+
+# Run with verbose output
+pytest -v
+```
+
+---
+
+## Code Quality
+
+This codebase maintains high standards for reliability and maintainability:
+
+### Type Safety
+- Full type hints throughout the core modules
+- Type checking compatible with mypy
+- All public APIs have complete type annotations
+
+### Error Handling
+- Specific exception handling for all error cases (no broad `Exception` catches)
+- Custom exception classes for each module with clear error messages
+- Actionable error messages with suggested fixes
+- Safe expression evaluation with restricted eval() environment
+
+### Module Organization
+- Clear separation of concerns across components
+- Logical grouping of related functionality
+- Well-documented public API exports in `__init__.py`
+- Consistent import organization
+
+### Testing
+- 199+ passing tests covering all Phase 2 components
+- Comprehensive unit and integration test coverage
+- Test configuration in pytest.ini for easy running
+- Clear test organization by component
+
+### Package Structure
+- Proper Python packaging with pyproject.toml
+- setuptools-compatible setup.py for backward compatibility
+- Clear package documentation and examples
+- Well-maintained dependencies
+
+### Code Standards
+- Consistent naming conventions
+- Docstrings for all public functions and classes
+- Proper module-level imports (no inline imports in methods)
+- Security-conscious implementations (eval restriction, input validation)
+
+---
+
+## Development Workflow
+
+### Contributing
+
+1. Fork and clone the repository
+2. Install development dependencies: `pip install -e ".[dev]"`
+3. Create a feature branch: `git checkout -b feature/your-feature-name`
+4. Write tests for your changes
+5. Run tests and ensure all pass: `pytest`
+6. Format code with black: `black src test`
+7. Submit a pull request
+
+### Code Standards
+
+All code should:
+- Pass type checking: `mypy src`
+- Follow PEP 8 with 100 character line limit
+- Have comprehensive docstrings
+- Include tests for new functionality
+- Be formatted with black

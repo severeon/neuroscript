@@ -8,6 +8,7 @@ Implements Requirements 9.1, 9.2, 9.3, 9.4, 9.5 from specs/02-requirements.md
 
 import logging
 import subprocess
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -205,7 +206,6 @@ class ContainerRuntime:
 
         try:
             # Run container and capture output
-            import time
             start_time = time.time()
 
             result = subprocess.run(

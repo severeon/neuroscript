@@ -51,7 +51,7 @@ class CapabilityParser:
                 data = yaml.safe_load(f)
         except yaml.YAMLError as e:
             raise CapabilityParseError(f"Malformed YAML in {file_path}: {e}")
-        except Exception as e:
+        except (OSError, IOError) as e:
             raise CapabilityParseError(f"Error reading {file_path}: {e}")
 
         if not isinstance(data, dict):
