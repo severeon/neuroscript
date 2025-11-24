@@ -436,7 +436,7 @@ def test_compile_includes_init_method(compilation_engine, tmp_path):
     compilation_engine.compile(output_file, class_name="TestModel")
 
     code = output_file.read_text()
-    assert "def __init__(self):" in code
+    assert "def __init__(self, enable_monitoring: bool = True):" in code
     assert "super().__init__()" in code
 
 

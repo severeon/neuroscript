@@ -84,7 +84,7 @@ class ConstraintSolver:
     EQUALITY_PATTERN = re.compile(r'(\w+)\s*==\s*(\d+)')
     DIMENSION_PATTERN = re.compile(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\b')
 
-    def __init__(self, graph: ArchitectureGraph, registry: BlockRegistry):
+    def __init__(self, graph: ArchitectureGraph, registry: BlockRegistry, input_shape: Optional[List[int]] = None):
         """
         Initialize ConstraintSolver.
 
@@ -97,9 +97,14 @@ class ConstraintSolver:
         self.constraints: List[Constraint] = []
         self.dimensions: Set[str] = set()
         self.dimension_domains: Dict[str, Set[int]] = {}
+        self.input_shape = input_shape
         self._collected = False
 
     def solve(self, max_configs: int = 100) -> List[Configuration]:
+        """
+        Find all valid dimension configurations.
+        If input_shape is provided, bind standard input dimensions to those values first.
+        """
         """
         Find all valid dimension configurations.
 
@@ -114,6 +119,16 @@ class ConstraintSolver:
         Raises:
             ConstraintSolverError: If constraint collection or solving fails
         """
+        # Bind input shape if provided
+        if self.input_shape and not self._collected:
+            standard_dims = ['batch', 'sequence', 'dim']
+            bindings = {}
+            for i, val in enumerate(self.input_shape):
+                dim_name = standard_dims[i] if i < len(standard_dims) else f'dim_{i}'
+                bindings[dim_name] = val
+            input_config = Configuration(bindings=bindings)
+            self.apply_configuration(input_config)
+
         # Collect constraints if not already done
         if not self._collected:
             self._collect_constraints()

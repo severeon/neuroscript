@@ -7,13 +7,16 @@ Implements Requirements 9.1, 9.2, 9.3, 9.4, 9.5 from specs/02-requirements.md
 """
 
 import logging
+import re
 import subprocess
+import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from .hardware_detector import HardwareDetector
+from .monitoring import MonitorEvent, ResourceSample, parse_event_line
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +32,8 @@ class ExecutionResult:
         container_id: Docker container ID
         oom_killed: Whether container was killed due to OOM
         execution_time_seconds: Time taken for execution
+        resource_samples: Periodic resource usage samples during execution
+        monitoring_events: Parsed monitoring events from model execution
     """
 
     exit_code: int
@@ -37,6 +42,8 @@ class ExecutionResult:
     container_id: str
     oom_killed: bool
     execution_time_seconds: float
+    resource_samples: List[ResourceSample] = field(default_factory=list)
+    monitoring_events: List[MonitorEvent] = field(default_factory=list)
 
 
 class ContainerRuntimeError(Exception):
@@ -142,10 +149,12 @@ class ContainerRuntime:
         memory_limit: Optional[str] = None,
         enable_gpu: bool = False,
         timeout: Optional[int] = None,
-        env_vars: Optional[Dict[str, str]] = None
+        env_vars: Optional[Dict[str, str]] = None,
+        stream_output: bool = True,
+        output_callback: Optional[Callable[[str], None]] = None
     ) -> ExecutionResult:
         """
-        Execute model in Docker container.
+        Execute model in Docker container with resource monitoring.
 
         Implements Req 9.1, 9.2, 9.3, 9.4, 9.5
 
@@ -158,9 +167,12 @@ class ContainerRuntime:
             enable_gpu: Whether to enable GPU passthrough
             timeout: Execution timeout in seconds (default: None)
             env_vars: Environment variables to set in container
+            stream_output: Whether to stream output line-by-line (default: True)
+            output_callback: Callback function for each output line (default: None)
 
         Returns:
-            ExecutionResult: Execution results including stdout, stderr, exit code
+            ExecutionResult: Execution results including stdout, stderr, exit code,
+                resource samples, and monitoring events
 
         Raises:
             ContainerRuntimeError: If execution fails
@@ -204,18 +216,58 @@ class ContainerRuntime:
             env_vars=env_vars
         )
 
+        # Start resource monitoring in background thread
+        resource_samples: List[ResourceSample] = []
+        monitoring_events: List[MonitorEvent] = []
+        stop_monitoring = threading.Event()
+
+        monitor_thread = threading.Thread(
+            target=self._monitor_resources,
+            args=(container_id, resource_samples, stop_monitoring, enable_gpu),
+            daemon=True
+        )
+
         try:
+            # Start monitoring thread
+            monitor_thread.start()
+
             # Run container and capture output
             start_time = time.time()
 
-            result = subprocess.run(
-                ["docker", "start", "-a", container_id],
-                capture_output=True,
-                timeout=timeout,
-                text=True
-            )
+            if stream_output and output_callback:
+                # Stream output line-by-line
+                stdout_lines, stderr_lines = self._stream_container_output(
+                    container_id,
+                    timeout,
+                    output_callback,
+                    monitoring_events
+                )
+                stdout = "\n".join(stdout_lines)
+                stderr = "\n".join(stderr_lines)
+                exit_code = self._get_container_exit_code(container_id)
+            else:
+                # Buffered output (original behavior)
+                result = subprocess.run(
+                    ["docker", "start", "-a", container_id],
+                    capture_output=True,
+                    timeout=timeout,
+                    text=True
+                )
+                stdout = result.stdout
+                stderr = result.stderr
+                exit_code = result.returncode
+
+                # Parse monitoring events from stdout
+                for line in stdout.splitlines():
+                    event = parse_event_line(line)
+                    if event:
+                        monitoring_events.append(event)
 
             execution_time = time.time() - start_time
+
+            # Stop resource monitoring
+            stop_monitoring.set()
+            monitor_thread.join(timeout=2.0)
 
             # Check if OOM killed
             oom_killed = self._check_oom_killed(container_id)
@@ -223,33 +275,29 @@ class ContainerRuntime:
             if oom_killed:
                 self.handle_oom(container_id, memory_limit_str)
 
-            # Get final exit code
-            inspect_result = subprocess.run(
-                ["docker", "inspect", "-f", "{{.State.ExitCode}}", container_id],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
-            exit_code = int(inspect_result.stdout.strip()) if inspect_result.returncode == 0 else result.returncode
-
             return ExecutionResult(
                 exit_code=exit_code,
-                stdout=result.stdout,
-                stderr=result.stderr,
+                stdout=stdout,
+                stderr=stderr,
                 container_id=container_id,
                 oom_killed=oom_killed,
-                execution_time_seconds=execution_time
+                execution_time_seconds=execution_time,
+                resource_samples=resource_samples,
+                monitoring_events=monitoring_events
             )
 
         except subprocess.TimeoutExpired:
             # Kill container on timeout
             logger.warning(f"Execution timed out after {timeout}s, killing container")
+            stop_monitoring.set()
             subprocess.run(["docker", "kill", container_id], capture_output=True)
             raise ContainerRuntimeError(
                 f"Execution timed out after {timeout} seconds"
             )
 
         finally:
+            # Ensure monitoring stopped
+            stop_monitoring.set()
             # Cleanup container
             self._cleanup_container(container_id)
 
@@ -450,6 +498,233 @@ class ContainerRuntime:
             f"  3. Use a smaller model variant\n"
             f"  4. Enable gradient checkpointing if training"
         )
+
+    def _monitor_resources(
+        self,
+        container_id: str,
+        samples: List[ResourceSample],
+        stop_event: threading.Event,
+        enable_gpu: bool = False
+    ) -> None:
+        """
+        Monitor container resource usage in background thread.
+
+        Polls docker stats every second and records CPU, memory, and GPU usage.
+
+        Args:
+            container_id: Container ID to monitor
+            samples: List to append resource samples to
+            stop_event: Event to signal monitoring should stop
+            enable_gpu: Whether to query GPU stats
+        """
+        while not stop_event.is_set():
+            try:
+                # Get CPU and memory stats from docker stats
+                result = subprocess.run(
+                    ["docker", "stats", "--no-stream", "--format",
+                     "{{.CPUPerc}},{{.MemUsage}}", container_id],
+                    capture_output=True,
+                    text=True,
+                    timeout=2
+                )
+
+                if result.returncode == 0:
+                    stats = result.stdout.strip()
+                    if stats:
+                        # Parse docker stats output
+                        # Format: "15.23%,1.5GiB / 2GiB"
+                        parts = stats.split(',')
+                        if len(parts) >= 2:
+                            cpu_str = parts[0].strip().rstrip('%')
+                            mem_str = parts[1].strip()
+
+                            try:
+                                cpu_percent = float(cpu_str)
+                            except ValueError:
+                                cpu_percent = 0.0
+
+                            # Parse memory usage: "1.5GiB / 2GiB"
+                            mem_parts = mem_str.split('/')
+                            if len(mem_parts) >= 2:
+                                mem_used_str = mem_parts[0].strip()
+                                mem_limit_str = mem_parts[1].strip()
+
+                                mem_used_mb = self._parse_memory_to_mb(mem_used_str)
+                                mem_limit_mb = self._parse_memory_to_mb(mem_limit_str)
+
+                                mem_percent = (mem_used_mb / mem_limit_mb * 100) if mem_limit_mb > 0 else 0.0
+                            else:
+                                mem_used_mb = 0.0
+                                mem_percent = 0.0
+
+                            # Get GPU stats if enabled
+                            gpu_util = None
+                            gpu_mem = None
+                            if enable_gpu:
+                                try:
+                                    gpu_result = subprocess.run(
+                                        ["docker", "exec", container_id,
+                                         "nvidia-smi", "--query-gpu=utilization.gpu,memory.used",
+                                         "--format=csv,noheader,nounits"],
+                                        capture_output=True,
+                                        text=True,
+                                        timeout=2
+                                    )
+                                    if gpu_result.returncode == 0:
+                                        gpu_stats = gpu_result.stdout.strip().split(',')
+                                        if len(gpu_stats) >= 2:
+                                            gpu_util = float(gpu_stats[0].strip())
+                                            gpu_mem = float(gpu_stats[1].strip())
+                                except Exception:
+                                    pass  # GPU monitoring is best-effort
+
+                            sample = ResourceSample(
+                                timestamp=time.time(),
+                                cpu_percent=cpu_percent,
+                                memory_mb=mem_used_mb,
+                                memory_percent=mem_percent,
+                                gpu_utilization=gpu_util,
+                                gpu_memory_mb=gpu_mem
+                            )
+                            samples.append(sample)
+
+            except Exception as e:
+                logger.debug(f"Resource monitoring error: {e}")
+
+            # Sample every 1 second
+            stop_event.wait(1.0)
+
+    def _parse_memory_to_mb(self, mem_str: str) -> float:
+        """
+        Parse Docker memory string to megabytes.
+
+        Args:
+            mem_str: Memory string like "1.5GiB", "512MiB", "1024KiB"
+
+        Returns:
+            Memory in megabytes
+        """
+        mem_str = mem_str.strip()
+        match = re.match(r'([0-9.]+)\s*([A-Za-z]+)', mem_str)
+        if not match:
+            return 0.0
+
+        value = float(match.group(1))
+        unit = match.group(2).lower()
+
+        # Convert to MB
+        if unit in ['gib', 'gb', 'g']:
+            return value * 1024
+        elif unit in ['mib', 'mb', 'm']:
+            return value
+        elif unit in ['kib', 'kb', 'k']:
+            return value / 1024
+        elif unit in ['b']:
+            return value / (1024 * 1024)
+        else:
+            return value
+
+    def _stream_container_output(
+        self,
+        container_id: str,
+        timeout: Optional[int],
+        output_callback: Callable[[str], None],
+        monitoring_events: List[MonitorEvent]
+    ) -> tuple[List[str], List[str]]:
+        """
+        Stream container output line-by-line and call callback.
+
+        Args:
+            container_id: Container ID
+            timeout: Execution timeout
+            output_callback: Function to call for each output line
+            monitoring_events: List to append parsed events to
+
+        Returns:
+            Tuple of (stdout_lines, stderr_lines)
+        """
+        # Start container in detached mode
+        subprocess.run(["docker", "start", container_id], capture_output=True)
+
+        stdout_lines = []
+        stderr_lines = []
+
+        # Follow logs
+        start_time = time.time()
+        process = subprocess.Popen(
+            ["docker", "logs", "-f", container_id],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1  # Line buffered
+        )
+
+        try:
+            while True:
+                # Check timeout
+                if timeout and (time.time() - start_time) > timeout:
+                    process.kill()
+                    raise subprocess.TimeoutExpired(process.args, timeout)
+
+                # Read stdout line
+                if process.stdout:
+                    line = process.stdout.readline()
+                    if line:
+                        line = line.rstrip('\n')
+                        stdout_lines.append(line)
+
+                        # Parse monitoring events
+                        event = parse_event_line(line)
+                        if event:
+                            monitoring_events.append(event)
+
+                        # Call output callback
+                        output_callback(line)
+
+                # Check if process finished
+                if process.poll() is not None:
+                    # Read remaining lines
+                    if process.stdout:
+                        for line in process.stdout:
+                            line = line.rstrip('\n')
+                            stdout_lines.append(line)
+                            event = parse_event_line(line)
+                            if event:
+                                monitoring_events.append(event)
+                            output_callback(line)
+                    break
+
+                time.sleep(0.01)  # Small sleep to avoid busy-waiting
+
+        finally:
+            if process.poll() is None:
+                process.kill()
+            process.wait()
+
+        return stdout_lines, stderr_lines
+
+    def _get_container_exit_code(self, container_id: str) -> int:
+        """
+        Get container exit code.
+
+        Args:
+            container_id: Container ID
+
+        Returns:
+            Exit code (0 for success)
+        """
+        try:
+            result = subprocess.run(
+                ["docker", "inspect", "-f", "{{.State.ExitCode}}", container_id],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0:
+                return int(result.stdout.strip())
+            return 1
+        except Exception:
+            return 1
 
     def _cleanup_container(self, container_id: str) -> None:
         """
