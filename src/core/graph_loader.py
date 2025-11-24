@@ -89,7 +89,7 @@ class GraphLoader:
         """
         self.registry = registry
 
-    def load(self, file_path: str) -> ArchitectureGraph:
+    def load(self, file_path: str | Path) -> ArchitectureGraph:
         """
         Load and parse an architecture YAML file.
 
@@ -103,21 +103,22 @@ class GraphLoader:
             GraphLoaderError: If parsing or validation fails
         """
         file_path = Path(file_path)
+        fp_str = str(file_path)
 
         if not file_path.exists():
-            raise GraphLoaderError(f"Architecture file not found: {file_path}")
+            raise GraphLoaderError(f"Architecture file not found: {fp_str}")
 
         try:
             with open(file_path, 'r') as f:
                 data = yaml.safe_load(f)
         except yaml.YAMLError as e:
-            raise GraphLoaderError(f"Malformed YAML in {file_path}: {e}")
+            raise GraphLoaderError(f"Malformed YAML in {fp_str}: {e}")
         except (OSError, IOError) as e:
-            raise GraphLoaderError(f"Error reading {file_path}: {e}")
+            raise GraphLoaderError(f"Error reading {fp_str}: {e}")
 
         if not isinstance(data, dict):
             raise GraphLoaderError(
-                f"Expected YAML dict in {file_path}, got {type(data)}"
+                f"Expected YAML dict in {fp_str}, got {type(data)}"
             )
 
         return self._parse_architecture(data, file_path)
