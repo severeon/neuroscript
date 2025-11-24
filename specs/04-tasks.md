@@ -104,16 +104,16 @@ End-to-end testing and documentation
   - [x] 7.9 Write unit tests for solvable and unsolvable constraint sets
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 8. Implement GraphValidator
-  - [ ] 8.1 Create `src/core/graph_validator.py`
-  - [ ] 8.2 Define `ValidationError` and `ValidationResult` dataclasses
-  - [ ] 8.3 Implement `validate()` to orchestrate all validation steps
-  - [ ] 8.4 Implement `create_shape_error()` with actionable suggestions
-  - [ ] 8.5 Implement `create_constraint_error()` with valid alternatives
-  - [ ] 8.6 Implement `suggest_similar_blocks()` using fuzzy string matching
-  - [ ] 8.7 Add hardware insufficiency error messages with suggestions
-  - [ ] 8.8 Ensure all error messages use clear, non-technical language
-  - [ ] 8.9 Write integration tests combining all validators
+- [x] 8. Implement GraphValidator
+  - [x] 8.1 Create `src/core/graph_validator.py`
+  - [x] 8.2 Define `ValidationError` and `ValidationResult` dataclasses
+  - [x] 8.3 Implement `validate()` to orchestrate all validation steps
+  - [x] 8.4 Implement `create_shape_error()` with actionable suggestions
+  - [x] 8.5 Implement `create_constraint_error()` with valid alternatives
+  - [x] 8.6 Implement `suggest_similar_blocks()` using fuzzy string matching
+  - [x] 8.7 Add hardware insufficiency error messages with suggestions
+  - [x] 8.8 Ensure all error messages use clear, non-technical language
+  - [x] 8.9 Write integration tests combining all validators
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
 ### Phase 3: Compilation & Execution
