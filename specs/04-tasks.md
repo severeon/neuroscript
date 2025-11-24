@@ -155,12 +155,12 @@ End-to-end testing and documentation
 
 ### Phase 4: Example Blocks
 
-- [ ] 12. Create Linear Block
-  - [ ] 12.1 Create `blocks/linear/` directory
-  - [ ] 12.2 Write `blocks/linear/block.yaml` with capability specification
-  - [ ] 12.3 Implement `blocks/linear/module.py` with BlockInterface
-  - [ ] 12.4 Write `blocks/linear/test.py` with shape and parameter tests
-  - [ ] 12.5 Test with CapabilityParser and BlockRegistry
+- [x] 12. Create Linear Block
+  - [x] 12.1 Create `blocks/linear/` directory
+  - [x] 12.2 Write `blocks/linear/block.yaml` with capability specification
+  - [x] 12.3 Implement `blocks/linear/module.py` with BlockInterface
+  - [x] 12.4 Write `blocks/linear/test.py` with shape and parameter tests
+  - [x] 12.5 Test with CapabilityParser and BlockRegistry
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
 - [ ] 13. Create Embedding Block
