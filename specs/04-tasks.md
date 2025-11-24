@@ -71,14 +71,14 @@ End-to-end testing and documentation
 
 ### Phase 2: Validation Pipeline
 
-- [ ] 5. Implement ShapeValidator
-  - [ ] 5.1 Create `src/core/shape_validator.py`
-  - [ ] 5.2 Define `ShapePattern` and `UnificationResult` dataclasses
-  - [ ] 5.3 Implement `unify()` to match output and input shape patterns
-  - [ ] 5.4 Implement `match_dimension()` to handle wildcards and named dimensions
-  - [ ] 5.5 Implement `validate_consistency()` to check dimension bindings
-  - [ ] 5.6 Add error reporting for shape mismatches with expected/actual shapes
-  - [ ] 5.7 Write unit tests for compatible and incompatible shape pairs
+- [x] 5. Implement ShapeValidator
+  - [x] 5.1 Create `src/core/shape_validator.py`
+  - [x] 5.2 Define `ShapePattern` and `UnificationResult` dataclasses
+  - [x] 5.3 Implement `unify()` to match output and input shape patterns
+  - [x] 5.4 Implement `match_dimension()` to handle wildcards and named dimensions
+  - [x] 5.5 Implement `validate_consistency()` to check dimension bindings
+  - [x] 5.6 Add error reporting for shape mismatches with expected/actual shapes
+  - [x] 5.7 Write unit tests for compatible and incompatible shape pairs
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
 - [x] 6. Implement HardwareDetector
@@ -92,16 +92,16 @@ End-to-end testing and documentation
   - [x] 6.8 Write unit tests with mocked hardware detection
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 7. Implement ConstraintSolver
-  - [ ] 7.1 Create `src/core/constraint_solver.py`
-  - [ ] 7.2 Define `Configuration` dataclass
-  - [ ] 7.3 Implement `solve()` to enumerate valid dimension configurations
-  - [ ] 7.4 Implement constraint propagation algorithm
-  - [ ] 7.5 Implement `check_satisfiable()` to detect unsatisfiable constraints
-  - [ ] 7.6 Implement `apply_configuration()` to bind dimensions to values
-  - [ ] 7.7 Implement `detect_conflicts()` to find conflicting constraints
-  - [ ] 7.8 Add parameter count and memory estimation for each configuration
-  - [ ] 7.9 Write unit tests for solvable and unsolvable constraint sets
+- [x] 7. Implement ConstraintSolver
+  - [x] 7.1 Create `src/core/constraint_solver.py`
+  - [x] 7.2 Define `Configuration` dataclass
+  - [x] 7.3 Implement `solve()` to enumerate valid dimension configurations
+  - [x] 7.4 Implement constraint propagation algorithm
+  - [x] 7.5 Implement `check_satisfiable()` to detect unsatisfiable constraints
+  - [x] 7.6 Implement `apply_configuration()` to bind dimensions to values
+  - [x] 7.7 Implement `detect_conflicts()` to find conflicting constraints
+  - [x] 7.8 Add parameter count and memory estimation for each configuration
+  - [x] 7.9 Write unit tests for solvable and unsolvable constraint sets
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
 - [ ] 8. Implement GraphValidator
