@@ -118,16 +118,16 @@ End-to-end testing and documentation
 
 ### Phase 3: Compilation & Execution
 
-- [ ] 9. Implement CompilationEngine
-  - [ ] 9.1 Create `src/core/compilation_engine.py`
-  - [ ] 9.2 Create code template using jinja2 for PyTorch module generation
-  - [ ] 9.3 Implement `compile()` to generate Python module file
-  - [ ] 9.4 Implement `generate_sequential()` for linear block chains
-  - [ ] 9.5 Implement `generate_parallel()` for parallel execution paths
-  - [ ] 9.6 Implement `generate_shape_assertions()` for runtime validation
-  - [ ] 9.7 Add import statements for block implementations
-  - [ ] 9.8 Format generated code using black
-  - [ ] 9.9 Write tests that compile and execute generated modules
+- [x] 9. Implement CompilationEngine
+  - [x] 9.1 Create `src/core/compilation_engine.py`
+  - [x] 9.2 Create code template using jinja2 for PyTorch module generation
+  - [x] 9.3 Implement `compile()` to generate Python module file
+  - [x] 9.4 Implement `generate_sequential()` for linear block chains
+  - [x] 9.5 Implement `generate_parallel()` for parallel execution paths
+  - [x] 9.6 Implement `generate_shape_assertions()` for runtime validation
+  - [x] 9.7 Add import statements for block implementations
+  - [x] 9.8 Format generated code using black
+  - [x] 9.9 Write tests that compile and execute generated modules
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
 - [ ] 10. Implement ContainerRuntime

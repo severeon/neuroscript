@@ -12,6 +12,7 @@ from .shape_validator import (
     UnificationResult,
     parse_shape_pattern,
 )
+from .compilation_engine import CompilationEngine, CompilationError
 
 __all__ = [
     "BlockInterface",
@@ -30,4 +31,6 @@ __all__ = [
     "ShapePattern",
     "UnificationResult",
     "parse_shape_pattern",
+    "CompilationEngine",
+    "CompilationError",
 ]
