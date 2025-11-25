@@ -361,3 +361,4 @@ result = validator.validate()
 - Shape patterns support wildcards (`*`) and named dimensions
 - Container runtime requires Docker installation
 - All tests pass on Python 3.8+
+- remember to source ~/.venv_ai/bin/activate

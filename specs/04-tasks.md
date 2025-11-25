@@ -163,12 +163,12 @@ End-to-end testing and documentation
   - [x] 12.5 Test with CapabilityParser and BlockRegistry
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
-- [ ] 13. Create Embedding Block
-  - [ ] 13.1 Create `blocks/embedding/` directory
-  - [ ] 13.2 Write `blocks/embedding/block.yaml` with vocab/dim parameters
-  - [ ] 13.3 Implement `blocks/embedding/module.py` using nn.Embedding
-  - [ ] 13.4 Write unit tests for discrete input to dense output transformation
-  - [ ] 13.5 Test integration with GraphLoader
+- [x] 13. Create Embedding Block
+  - [x] 13.1 Create `blocks/embedding/` directory
+  - [x] 13.2 Write `blocks/embedding/block.yaml` with vocab/dim parameters
+  - [x] 13.3 Implement `blocks/embedding/module.py` using nn.Embedding
+  - [x] 13.4 Write unit tests for discrete input to dense output transformation
+  - [x] 13.5 Test integration with GraphLoader
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
 - [ ] 14. Create LayerNorm Block
