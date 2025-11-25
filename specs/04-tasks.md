@@ -171,12 +171,12 @@ End-to-end testing and documentation
   - [x] 13.5 Test integration with GraphLoader
   - _Requirements: 1.1, 1.2, 1.4, 10.1, 10.2, 10.3_
 
-- [ ] 14. Create LayerNorm Block
-  - [ ] 14.1 Create `blocks/layernorm/` directory
-  - [ ] 14.2 Write `blocks/layernorm/block.yaml` with shape-preserving spec
-  - [ ] 14.3 Implement `blocks/layernorm/module.py` using nn.LayerNorm
-  - [ ] 14.4 Write tests verifying input shape == output shape
-  - [ ] 14.5 Test with ShapeValidator for shape preservation
+- [x] 14. Create LayerNorm Block
+  - [x] 14.1 Create `blocks/layernorm/` directory
+  - [x] 14.2 Write `blocks/layernorm/block.yaml` with shape-preserving spec
+  - [x] 14.3 Implement `blocks/layernorm/module.py` using nn.LayerNorm
+  - [x] 14.4 Write tests verifying input shape == output shape
+  - [x] 14.5 Test with ShapeValidator for shape preservation
   - _Requirements: 1.1, 1.2, 4.1, 10.1, 10.2, 10.3_
 
 - [ ] 15. Create Dropout Block
