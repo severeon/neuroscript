@@ -9,18 +9,23 @@ This document breaks down the NeuroScript v2 implementation into concrete, actio
 ## Development Phases
 
 ### Phase 1: Core Infrastructure (Week 1)
+
 Foundation components that other systems depend on
 
 ### Phase 2: Validation Pipeline (Week 2)
+
 Shape validation and constraint solving
 
 ### Phase 3: Compilation & Execution (Week 3) ✅
+
 Code generation and container runtime
 
 ### Phase 4: Example Blocks (Week 4)
+
 5 test blocks for validation
 
 ### Phase 5: Integration & Testing (Week 5)
+
 End-to-end testing and documentation
 
 ---
@@ -179,12 +184,12 @@ End-to-end testing and documentation
   - [x] 14.5 Test with ShapeValidator for shape preservation
   - _Requirements: 1.1, 1.2, 4.1, 10.1, 10.2, 10.3_
 
-- [ ] 15. Create Dropout Block
-  - [ ] 15.1 Create `blocks/dropout/` directory
-  - [ ] 15.2 Write `blocks/dropout/block.yaml` with dropout probability parameter
-  - [ ] 15.3 Implement `blocks/dropout/module.py` using nn.Dropout
-  - [ ] 15.4 Write tests for shape preservation and probability range validation
-  - [ ] 15.5 Test with ConstraintSolver for parameter validation
+- [x] 15. Create Dropout Block
+  - [x] 15.1 Create `blocks/dropout/` directory
+  - [x] 15.2 Write `blocks/dropout/block.yaml` with dropout probability parameter
+  - [x] 15.3 Implement `blocks/dropout/module.py` using nn.Dropout
+  - [x] 15.4 Write tests for shape preservation and probability range validation
+  - [x] 15.5 Test with ConstraintSolver for parameter validation
   - _Requirements: 1.1, 1.4, 10.1, 10.2, 10.3_
 
 - [ ] 16. Create Sequential Composition Block
@@ -245,22 +250,27 @@ End-to-end testing and documentation
 ## Development Dependencies
 
 ### Phase 1 Dependencies
+
 - Tasks 1-4 can be developed in parallel
 - Task 4 depends on Tasks 1-3 (needs BlockInterface, CapabilityParser, BlockRegistry)
 
 ### Phase 2 Dependencies
+
 - Tasks 5-7 can be developed in parallel after Phase 1
 - Task 8 depends on Tasks 5-7 (orchestrates all validators)
 
 ### Phase 3 Dependencies
+
 - Task 9 depends on Phase 1 and Phase 2
 - Task 10 can be developed in parallel with Task 9
 
 ### Phase 4 Dependencies
+
 - Tasks 11-15 can be developed in parallel after Phase 1 complete
 - All blocks follow the same template pattern
 
 ### Phase 5 Dependencies
+
 - Task 16 requires all previous phases complete
 - Tasks 17-21 can proceed in parallel with each other
 

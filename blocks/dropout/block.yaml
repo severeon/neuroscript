@@ -1,0 +1,33 @@
+name: Dropout
+version: 1.0.0
+
+capabilities:
+  inputs:
+    x:
+      type: Tensor
+      dtype: [float32, float16, bfloat16]
+      shape: ["*"]
+
+  outputs:
+    y:
+      type: Tensor
+      dtype: input.x.dtype
+      shape: ["*"]
+
+  params:
+    p:
+      type: float
+      range: [0.0, 1.0]
+      default: 0.5
+      required: false
+      description: "Probability of an element to be zeroed"
+
+    inplace:
+      type: bool
+      default: false
+      required: false
+      description: "If True, will do this operation in-place"
+
+  constraints:
+    - p >= 0.0
+    - p <= 1.0
