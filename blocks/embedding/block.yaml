@@ -1,0 +1,35 @@
+name: Embedding
+version: 1.0.0
+
+capabilities:
+  inputs:
+    indices:
+      type: Tensor
+      dtype: [int64]
+      shape: ["*", "seq"]
+
+  outputs:
+    embeddings:
+      type: Tensor
+      dtype: [float32, float16, bfloat16]
+      shape: ["*", "seq", "embedding_dim"]
+
+  params:
+    vocab_size:
+      type: int
+      range: [1, 1000000]
+      required: true
+
+    embedding_dim:
+      type: int
+      range: [1, 10000]
+      required: true
+
+    padding_idx:
+      type: int
+      default: null
+      required: false
+
+  constraints:
+    - vocab_size >= 1
+    - embedding_dim >= 1
