@@ -1,0 +1,34 @@
+name: LayerNorm
+version: 1.0.0
+
+capabilities:
+  inputs:
+    x:
+      type: Tensor
+      dtype: [float32, float16, bfloat16]
+      shape: ["*", "normalized_dim"]
+
+  outputs:
+    y:
+      type: Tensor
+      dtype: input.x.dtype
+      shape: ["*", "normalized_dim"]
+
+  params:
+    normalized_dim:
+      type: int
+      range: [1, 10000]
+      required: true
+
+    eps:
+      type: float
+      default: 1e-5
+      required: false
+
+    elementwise_affine:
+      type: bool
+      default: true
+      required: false
+
+  constraints:
+    - normalized_dim >= 1
